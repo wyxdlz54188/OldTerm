@@ -1,9 +1,9 @@
 #import <UIKit/UIKit.h>
+#import "SessionManager.h"
 
-@protocol SessionManagerDelegate;
 @class SessionManager;
 
-@interface TermView : UIView
+@interface TermView : UIView <SessionManagerDelegate>
 
 @property (nonatomic, retain) NSString *buffer;
 @property (nonatomic, retain) UIColor *textColor;
