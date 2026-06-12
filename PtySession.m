@@ -4,7 +4,7 @@
 #import <sys/wait.h>
 #import <unistd.h>
 #import <fcntl.h>
-#import <libutil.h>
+#import <util.h>
 
 @implementation PtySession
 

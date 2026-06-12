@@ -29,8 +29,8 @@
         NSLog(@"Remote connection to %@:%ld (not implemented for iOS 6)", host, (long)port);
     }
     
-    if ([delegate respondsToSelector:@selector(sessionDidConnect)]) {
-        [delegate sessionDidConnect];
+    if ([_delegate respondsToSelector:@selector(sessionDidConnect)]) {
+        [_delegate sessionDidConnect];
     }
     
     self.isConnected = YES;
@@ -75,12 +75,10 @@
                 NSString *text = [[NSString alloc] initWithBytes:buffer 
                                                           length:bytesRead 
                                                         encoding:NSUTF8StringEncoding];
-                if (text && [delegate respondsToSelector:@selector(appendText:)]) {
-                    [delegate performSelector:@selector(appendText:) withObject:text];
+                if (text && [_delegate respondsToSelector:@selector(appendText:)]) {
+                    [_delegate performSelector:@selector(appendText:) withObject:text];
                 }
-                // ARC handles text release
-            }
-                [text release];
+                // ARC handles text release automatically
             }
             
             [self startReadingPTY];
@@ -103,8 +101,8 @@
         
         self.isConnected = NO;
         
-        if ([delegate respondsToSelector:@selector(sessionDidDisconnect)]) {
-            [delegate sessionDidDisconnect];
+        if ([_delegate respondsToSelector:@selector(sessionDidDisconnect)]) {
+            [_delegate sessionDidDisconnect];
         }
         
         NSLog(@"Session disconnected");
