@@ -26,9 +26,10 @@ jobs:
     - name: Download iOS 6.1 SDK
       run: |
         mkdir -p $THEOS/sdks
-        curl -L "https://github.com/xybp888/iOS-SDKs/releases/download/master/iPhoneOS6.1.sdk.tar.gz" -o /tmp/sdk.tar.gz
-        tar -xzf /tmp/sdk.tar.gz -C $THEOS/sdks
-        rm /tmp/sdk.tar.gz
+        curl -L "https://github.com/xybp888/iOS-SDKs/archive/refs/heads/master.tar.gz" -o /tmp/sdks.tar.gz
+        tar -xzf /tmp/sdks.tar.gz -C /tmp
+        mv /tmp/iOS-SDKs-master/iPhoneOS6.1.sdk $THEOS/sdks/ 2>/dev/null || true
+        rm -rf /tmp/iOS-SDKs-master /tmp/sdks.tar.gz
         ls -la $THEOS/sdks/
 
     - name: Build NewTerm
