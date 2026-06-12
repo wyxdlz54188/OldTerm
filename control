@@ -2,7 +2,7 @@ Package: wyxdlz54188.newterm
 Name: NewTerm (iOS 6.0)
 Version: 1.0.0
 Architecture: iphoneos-arm
-Depends: firmware (>=6.0), mobileterminal, openssh, libsubstrate
+Depends: firmware (>=6.0)
 Maintainer: wyxdlz54188
 Author: HASHBANG Productions (original), wyxdlz54188 (iOS 6 port)
 Section: Terminal
