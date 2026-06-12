@@ -24,34 +24,28 @@ jobs:
         echo "$HOME/theos/bin" >> $GITHUB_PATH
         
     - name: Download iOS 6.0 SDK
-      id: sdk_download
       run: |
         mkdir -p $THEOS/sdks
         echo "=== Downloading iPhoneOS6.0 SDK ==="
-        curl -L "https://github.com/GrowtopiaJaw/iPhoneOS-SDK/releases/download/v1.0/iPhoneOS6.0.sdk.zip" -o /tmp/iPhoneOS6.0.sdk.zip
-        echo "SDK downloaded, size: $(ls -lh /tmp/iPhoneOS6.0.sdk.zip | awk '{print $5}')"
-        echo "Extracting SDK..."
-        cd /tmp && unzip -q iPhoneOS6.0.sdk.zip 2>&1 || echo "Unzip failed or already exists"
+        cd /tmp
+        curl -L -o iPhoneOS6.0.sdk.zip "https://github.com/GrowtopiaJaw/iPhoneOS-SDK/releases/download/v1.0/iPhoneOS6.0.sdk.zip"
+        echo "Downloaded file:"
+        ls -lh iPhoneOS6.0.sdk.zip
         echo ""
-        echo "=== Files in /tmp after extraction ==="
-        ls -la /tmp/ | head -30
+        echo "Unzipping..."
+        unzip iPhoneOS6.0.sdk.zip
         echo ""
-        # Find any .sdk folders
-        echo "=== Searching for .sdk folders ==="
-        find /tmp -maxdepth 1 -type d -name "*.sdk" -print
+        echo "Files after unzip:"
+        ls -la
         echo ""
-        # Move to Theos
-        for sdk in /tmp/*.sdk; do
-          if [ -d "$sdk" ]; then
-            SDK_NAME=$(basename "$sdk")
-            echo "Moving $sdk to $THEOS/sdks/$SDK_NAME"
-            mv "$sdk" "$THEOS/sdks/"
-          fi
-        done
-        rm -f /tmp/iPhoneOS6.0.sdk.zip
+        echo "Moving SDK to Theos..."
+        mv iPhoneOS6.0.sdk $THEOS/sdks/
         echo ""
-        echo "=== SDKs in \$THEOS/sdks ==="
+        echo "=== SDKs in THEOS ==="
         ls -la $THEOS/sdks/
+        echo ""
+        echo "SDK size:"
+        du -sh $THEOS/sdks/iPhoneOS6.0.sdk
 
     - name: Build NewTerm
       run: |
