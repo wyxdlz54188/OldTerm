@@ -1,6 +1,7 @@
 #import "TermView.h"
+#import "SessionManager.h"
 
-@interface TermView () <UITextFieldDelegate>
+@interface TermView () <UITextFieldDelegate, SessionManagerDelegate>
 @end
 
 @implementation TermView
@@ -9,6 +10,7 @@
 @synthesize cursorColor = _cursorColor, terminalFont = _terminalFont;
 @synthesize cursorX = _cursorX, cursorY = _cursorY, columns = _columns, rows = _rows;
 @synthesize cursorVisible = _cursorVisible;
+@synthesize sessionManager = _sessionManager;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -34,7 +36,7 @@
     self.multipleTouchEnabled = NO;
     
     self.hiddenInput = [[UITextField alloc] initWithFrame:CGRectZero];
-    self.hiddenInput.keyboardType = UIKeyboardTypeAsciiCapable;
+    self.hiddenInput.keyboardType = UIKeyboardTypeASCIICapable;
     self.hiddenInput.autocorrectionType = UITextAutocorrectionTypeNo;
     self.hiddenInput.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.hiddenInput.spellCheckingType = UITextSpellCheckingTypeNo;
@@ -129,7 +131,53 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if ([string isEqualToString:@"\n"] || [string isEqualToString:@"\r"]) {
+        [self.sessionManager sendCommand:@"\n"];
+        return NO;
+    }
+    
+    if ([string isEqualToString:@"\b"] || [string isEqualToString:@"\x7f"]) {
+        [self.sessionManager sendCommand:@"\x7f"];
+        return NO;
+    }
+    
+    if (string.length > 0) {
+        [self.sessionManager sendCommand:string];
+        [self.termView appendText:string];
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [self.sessionManager sendCommand:@"\n"];
+    [textField setText:@""];
     return NO;
+}
+
+#pragma mark - SessionManagerDelegate
+
+- (void)sessionDidConnect {
+    [self appendText:@"\n[Connected to local session]\n"];
+    [self.hiddenInput becomeFirstResponder];
+}
+
+- (void)sessionDidDisconnect {
+    [self appendText:@"\n[Disconnected]\n"];
+}
+
+- (void)session:(id)session didReceiveData:(NSData *)data {
+    NSString *text = [[NSString alloc] initWithBytes:[data bytes] 
+                                              length:[data length] 
+                                            encoding:NSUTF8StringEncoding];
+    if (text) {
+        [self appendText:text];
+    }
+}
+
+- (void)session:(id)session didFailWithError:(NSError *)error {
+    [self appendText:[NSString stringWithFormat:@"\n[Error: %@]\n", [error localizedDescription]]];
 }
 
 - (void)dealloc {

@@ -1,5 +1,8 @@
 #import <UIKit/UIKit.h>
 
+@protocol SessionManagerDelegate;
+@class SessionManager;
+
 @interface TermView : UIView
 
 @property (nonatomic, retain) NSString *buffer;
@@ -13,6 +16,7 @@
 @property (nonatomic, assign) NSInteger rows;
 @property (nonatomic, assign) BOOL cursorVisible;
 @property (nonatomic, retain) UITextField *hiddenInput;
+@property (nonatomic, retain) SessionManager *sessionManager;
 
 - (void)appendText:(NSString *)text;
 - (void)sendText:(NSString *)text;

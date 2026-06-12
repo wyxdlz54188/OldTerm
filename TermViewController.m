@@ -19,10 +19,11 @@
     self.title = @"NewTerm";
     
     self.sessionManager = [[SessionManager alloc] init];
-    self.sessionManager.delegate = self;
+    self.sessionManager.delegate = self.termView;
     
     self.termView = [[TermView alloc] initWithFrame:self.view.bounds];
-    self.termView.hiddenInput.keyboardType = UIKeyboardTypeAsciiCapable;
+    self.termView.sessionManager = self.sessionManager;
+    self.termView.hiddenInput.keyboardType = UIKeyboardTypeASCIICapable;
     [self.view addSubview:self.termView];
     
     [self setupToolbar];
@@ -75,8 +76,6 @@
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self 
                                                                                action:@selector(handleTap:)];
     [self.termView addGestureRecognizer:tapGesture];
-    
-    self.termView.hiddenInput.delegate = self;
 }
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture {
@@ -87,7 +86,6 @@
     if (!self.isConnected) {
         [self.sessionManager connectToHost:@"localhost" port:22];
         self.isConnected = YES;
-        [self.termView appendText:@"\n[Connected to local session]\n"];
     }
 }
 
@@ -117,58 +115,6 @@
     if (text) {
         [self.sessionManager sendCommand:text];
     }
-}
-
-#pragma mark - SessionManagerDelegate
-
-- (void)sessionDidConnect {
-    [self.termView appendText:@"\n[Connected to local session]\n"];
-    [self.termView.hiddenInput becomeFirstResponder];
-}
-
-- (void)sessionDidDisconnect {
-    [self.termView appendText:@"\n[Disconnected]\n"];
-}
-
-- (void)session:(id)session didReceiveData:(NSData *)data {
-    NSString *text = [[NSString alloc] initWithBytes:[data bytes] 
-                                              length:[data length] 
-                                            encoding:NSUTF8StringEncoding];
-    if (text) {
-        [self.termView appendText:text];
-    }
-}
-
-- (void)session:(id)session didFailWithError:(NSError *)error {
-    [self.termView appendText:[NSString stringWithFormat:@"\n[Error: %@]\n", [error localizedDescription]]];
-}
-
-#pragma mark - UITextFieldDelegate
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if ([string isEqualToString:@"\n"] || [string isEqualToString:@"\r"]) {
-        [self.sessionManager sendCommand:@"\n"];
-        return NO;
-    }
-    
-    if ([string isEqualToString:@"\b"] || [string isEqualToString:@"\x7f"]) {
-        [self.sessionManager sendCommand:@"\x7f"];
-        return NO;
-    }
-    
-    if (string.length > 0) {
-        [self.sessionManager sendCommand:string];
-        [self.termView appendText:string];
-        return NO;
-    }
-    
-    return YES;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [self.sessionManager sendCommand:@"\n"];
-    [textField setText:@""];
-    return NO;
 }
 
 - (void)dealloc {
