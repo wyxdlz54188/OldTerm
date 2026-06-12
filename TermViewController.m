@@ -18,9 +18,9 @@
     [super viewDidLoad];
     self.title = @"NewTerm";
     
-    self.sessionManager = [[[SessionManager alloc] init] autorelease];
+    self.sessionManager = [[SessionManager alloc] init];
     
-    self.termView = [[[TermView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.termView = [[TermView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:self.termView];
     
     [self setupToolbar];
@@ -43,25 +43,25 @@
     CGRect toolbarFrame = CGRectMake(0, self.view.frame.size.height - toolbarHeight, 
                                       self.view.frame.size.width, toolbarHeight);
     
-    self.toolbar = [[[UIToolbar alloc] initWithFrame:toolbarFrame] autorelease];
+    self.toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
     self.toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     
-    self.newTabButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+    self.newTabButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
                                                                         target:self
-                                                                        action:@selector(newTerminalSession)] autorelease];
+                                                                        action:@selector(newTerminalSession)];
     
-    self.settingsButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+    self.settingsButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction
                                                                          target:self
-                                                                         action:@selector(showSettings)] autorelease];
+                                                                         action:@selector(showSettings)];
     
-    self.copyButton = [[[UIBarButtonItem alloc] initWithTitle:@"Copy"
+    self.copyButton = [[UIBarButtonItem alloc] initWithTitle:@"Copy"
                                                         style:UIBarButtonItemStyleBordered
                                                        target:self
-                                                       action:@selector(copyTerminalText)] autorelease];
+                                                       action:@selector(copyTerminalText)];
     
-    UIBarButtonItem *flexibleSpace = [[[UIBarButtonItem alloc] 
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] 
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                       target:nil action:nil] autorelease];
+                                       target:nil action:nil];
     
     self.toolbar.items = @[self.newTabButton, flexibleSpace, self.copyButton, flexibleSpace, self.settingsButton];
     [self.view addSubview:self.toolbar];
@@ -109,13 +109,7 @@
 }
 
 - (void)dealloc {
-    [_termView release];
-    [_sessionManager release];
-    [_toolbar release];
-    [_newTabButton release];
-    [_settingsButton release];
-    [_copyButton release];
-    [super dealloc];
+    // ARC handles memory management automatically
 }
 
 @end

@@ -97,8 +97,7 @@
     if (_pid > 0) {
         [self close];
     }
-    [_shellPath release];
-    [super dealloc];
+    // ARC handles _shellPath release automatically
 }
 
 @end

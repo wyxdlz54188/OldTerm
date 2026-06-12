@@ -76,9 +76,11 @@
                 NSString *text = [[NSString alloc] initWithBytes:buffer 
                                                           length:bytesRead 
                                                         encoding:NSUTF8StringEncoding];
-                if (text && [delegate respondsToSelector:@selector(session:didReceiveData:)]) {
+                if (text && [delegate respondsToSelector:@selector(appendText:)]) {
                     [delegate performSelector:@selector(appendText:) withObject:text];
                 }
+                // ARC handles text release
+            }
                 [text release];
             }
             
@@ -122,8 +124,7 @@
     if (self.isConnected) {
         [self disconnect];
     }
-    [_host release];
-    [super dealloc];
+    // ARC handles _host release automatically
 }
 
 @end

@@ -113,12 +113,7 @@
 }
 
 - (void)dealloc {
-    [_buffer release];
-    [_textColor release];
-    [_backgroundColor release];
-    [_cursorColor release];
-    [_terminalFont release];
-    [super dealloc];
+    // ARC handles memory management automatically
 }
 
 @end

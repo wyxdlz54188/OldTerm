@@ -58,8 +58,7 @@
 }
 
 - (void)dealloc {
-    [_escapeBuffer release];
-    [super dealloc];
+    // ARC handles _escapeBuffer release automatically
 }
 
 @end
