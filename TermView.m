@@ -143,7 +143,7 @@
     
     if (string.length > 0) {
         [self.sessionManager sendCommand:string];
-        [self.termView appendText:string];
+        [self appendText:string];
         return NO;
     }
     
