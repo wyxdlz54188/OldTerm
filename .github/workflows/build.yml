@@ -15,7 +15,7 @@ jobs:
 
     - name: Install Theos dependencies
       run: |
-        brew install make dpkg libffi
+        brew install make dpkg libffi ldid
 
     - name: Setup Theos
       run: |
