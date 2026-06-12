@@ -29,38 +29,26 @@ jobs:
         echo "=== Downloading iPhoneOS6.0 SDK ==="
         cd /tmp
         curl -L -o iPhoneOS6.0.sdk.zip "https://github.com/GrowtopiaJaw/iPhoneOS-SDK/releases/download/v1.0/iPhoneOS6.0.sdk.zip"
-        echo "Downloaded file:"
-        ls -lh iPhoneOS6.0.sdk.zip
-        echo ""
+        echo "Downloaded file: $(ls -lh iPhoneOS6.0.sdk.zip)"
         echo "Unzipping..."
         unzip iPhoneOS6.0.sdk.zip
         echo ""
-        echo "=== All files after unzip (recursive) ==="
-        find . -type f | head -30
-        echo ""
-        echo "=== All .sdk folders (recursive, any depth) ==="
-        find . -type d -name "*.sdk"
-        echo ""
+        echo "=== Files after unzip ==="
+        ls -la
         
-        # Find the SDK folder at any depth
-        SDK_FOLDER=$(find . -type d -name "*.sdk" | head -1 | sed 's|^\./||')
-        echo "Found SDK folder path: $SDK_FOLDER"
+        # The SDK extracts as "6.0", rename it
+        echo "Renaming 6.0 to iPhoneOS6.0.sdk..."
+        mv 6.0 $THEOS/sdks/iPhoneOS6.0.sdk
         
-        if [ -n "$SDK_FOLDER" ]; then
-          echo "Creating $THEOS/sdks/iPhoneOS6.0.sdk"
-          mkdir -p $THEOS/sdks/iPhoneOS6.0.sdk
-          echo "Copying contents..."
-          cp -r "$SDK_FOLDER"/. $THEOS/sdks/iPhoneOS6.0.sdk/
-          rm -rf iPhoneOS6.0.sdk.zip
-        else
-          echo "ERROR: No .sdk folder found!"
-          ls -laR | head -50
-          exit 1
-        fi
+        # Cleanup
+        rm -f iPhoneOS6.0.sdk.zip
         
         echo ""
         echo "=== SDKs in THEOS ==="
         ls -la $THEOS/sdks/
+        echo ""
+        echo "SDK structure:"
+        ls $THEOS/sdks/iPhoneOS6.0.sdk/
         echo ""
         echo "SDK size:"
         du -sh $THEOS/sdks/iPhoneOS6.0.sdk
