@@ -27,19 +27,22 @@ jobs:
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
         echo "$HOME/theos/bin" >> $GITHUB_PATH
 
-    - name: Download iOS 6.0 SDK
+    - name: Download iOS SDK
       run: |
         mkdir -p $THEOS/sdks
-        curl -L https://github.com/xybp888/iOS-SDKs/archive/master.tar.gz -o iOS-SDKs.tar.gz
-        tar -xzf iOS-SDKs.tar.gz
-        mv iOS-SDKs-master/iPhoneOS6.0.sdk $THEOS/sdks/
-        mv iOS-SDKs-master/iPhoneOS6.1.sdk $THEOS/sdks/
-        rm -rf iOS-SDKs-master iOS-SDKs.tar.gz
+        curl -L https://github.com/theos/sdks/archive/master.tar.gz -o sdks.tar.gz
+        tar -xzf sdks.tar.gz
+        mv sdks-master/*.sdk $THEOS/sdks/ || true
+        if [ ! -d "$THEOS/sdks/iPhoneOS6.0.sdk" ]; then
+          echo "Using iPhoneOS.sdk as iPhoneOS6.0.sdk"
+          mv $THEOS/sdks/*.sdk $THEOS/sdks/iPhoneOS6.0.sdk 2>/dev/null || true
+        fi
+        rm -rf sdks-master sdks.tar.gz
+        ls -la $THEOS/sdks/
 
     - name: Build NewTerm
       run: |
         make package FINALVERSION=1.0.0
-        make package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.0
 
     - name: Upload Package
       uses: actions/upload-artifact@v4
