@@ -1,0 +1,129 @@
+#import "SessionManager.h"
+#import <sys/ioctl.h>
+#import <sys/types.h>
+#import <sys/wait.h>
+#import <unistd.h>
+#import <fcntl.h>
+#import <utmp.h>
+#import <libutil.h>
+
+@implementation SessionManager
+
+@synthesize delegate = _delegate, host = _host, port = _port, isConnected = _isConnected;
+
+- (id)init {
+    if ((self = [super init])) {
+        _isConnected = NO;
+        _ptyFd = -1;
+        _childPid = -1;
+    }
+    return self;
+}
+
+- (void)connectToHost:(NSString *)host port:(NSInteger)port {
+    self.host = host;
+    self.port = port;
+    
+    if ([host isEqualToString:@"localhost"]) {
+        [self startLocalShell];
+    } else {
+        NSLog(@"Remote connection to %@:%ld (not implemented for iOS 6)", host, (long)port);
+    }
+    
+    if ([delegate respondsToSelector:@selector(sessionDidConnect)]) {
+        [delegate sessionDidConnect];
+    }
+    
+    self.isConnected = YES;
+}
+
+- (void)startLocalShell {
+    struct winsize win = {
+        .ws_row = 24,
+        .ws_col = 80,
+        .ws_xpixel = 0,
+        .ws_ypixel = 0
+    };
+    
+    int master;
+    pid_t pid = forkpty(&master, NULL, NULL, &win);
+    
+    if (pid < 0) {
+        NSLog(@"Failed to create PTY");
+        return;
+    } else if (pid == 0) {
+        execl("/bin/sh", "sh", "-l", NULL);
+        exit(1);
+    }
+    
+    _ptyFd = master;
+    _childPid = pid;
+    
+    fcntl(_ptyFd, F_SETFL, fcntl(_ptyFd, F_GETFL, 0) | O_NONBLOCK);
+    
+    [self startReadingPTY];
+    
+    NSLog(@"Local shell started (PID: %d)", pid);
+}
+
+- (void)startReadingPTY {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        if (_ptyFd > 0) {
+            char buffer[4096];
+            ssize_t bytesRead = read(_ptyFd, buffer, sizeof(buffer));
+            
+            if (bytesRead > 0) {
+                NSString *text = [[NSString alloc] initWithBytes:buffer 
+                                                          length:bytesRead 
+                                                        encoding:NSUTF8StringEncoding];
+                if (text && [delegate respondsToSelector:@selector(session:didReceiveData:)]) {
+                    [delegate performSelector:@selector(appendText:) withObject:text];
+                }
+                [text release];
+            }
+            
+            [self startReadingPTY];
+        }
+    });
+}
+
+- (void)disconnect {
+    if (self.isConnected) {
+        if (_childPid > 0) {
+            kill(_childPid, SIGTERM);
+            waitpid(_childPid, NULL, 0);
+            _childPid = -1;
+        }
+        
+        if (_ptyFd > 0) {
+            close(_ptyFd);
+            _ptyFd = -1;
+        }
+        
+        self.isConnected = NO;
+        
+        if ([delegate respondsToSelector:@selector(sessionDidDisconnect)]) {
+            [delegate sessionDidDisconnect];
+        }
+        
+        NSLog(@"Session disconnected");
+    }
+}
+
+- (void)sendCommand:(NSString *)command {
+    if (self.isConnected && _ptyFd > 0) {
+        const char *str = [command UTF8String];
+        write(_ptyFd, str, strlen(str));
+        NSLog(@"Sent command: %@", command);
+    }
+}
+
+- (void)dealloc {
+    if (self.isConnected) {
+        [self disconnect];
+    }
+    [_host release];
+    [super dealloc];
+}
+
+@end

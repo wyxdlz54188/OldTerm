@@ -1,0 +1,39 @@
+# NewTerm iOS 6 .gitignore
+
+## Build outputs
+*.o
+*.a
+*.app
+*.deb
+*.ipa
+packages/
+build/
+.theos/
+obj/
+layout/
+
+## Xcode
+*.xcworkspace
+*.xcodeproj/xcuserdata
+DerivedData/
+*.pbxuser
+*.mode1v
+*.mode2v
+*.perspectivev
+
+## macOS
+.DS_Store
+._*
+
+## IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+## Certificates
+*.p12
+*.mobileprovision
+*.pem
+*.key

@@ -1,0 +1,9 @@
+Package: wyxdlz54188.newterm
+Name: NewTerm (iOS 6)
+Version: 1.0.0
+Architecture: iphoneos-arm
+Depends: firmware (>=6.0), mobileterminal, openssh, libsubstrate
+Maintainer: wyxdlz54188
+Author: HASHBANG Productions (original), wyxdlz54188 (iOS 6 port)
+Section: Terminal
+Description: NewTerm terminal emulator ported to iOS 6. Supports armv7/armv7s devices including iPhone 3GS, iPhone 4, iPhone 4S, iPad 2, and iPod touch 4/5.

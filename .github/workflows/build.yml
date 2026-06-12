@@ -1,0 +1,69 @@
+name: Build NewTerm iOS 6
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build NewTerm (iOS 6.0)
+    runs-on: macos-11
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Theos
+      uses: actions/checkout@v3
+      with:
+        repository: theos/theos
+        path: theos
+        submodules: recursive
+
+    - name: Setup Theos Environment
+      run: |
+        echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+        echo "$HOME/theos/bin" >> $GITHUB_PATH
+
+    - name: Download iOS 6.0 SDK
+      run: |
+        mkdir -p $THEOS/sdks
+        curl -L https://github.com/xybp888/iOS-SDKs/archive/master.tar.gz -o iOS-SDKs.tar.gz
+        tar -xzf iOS-SDKs.tar.gz
+        mv iOS-SDKs-master/iPhoneOS6.0.sdk $THEOS/sdks/
+        mv iOS-SDKs-master/iPhoneOS6.1.sdk $THEOS/sdks/
+        rm -rf iOS-SDKs-master iOS-SDKs.tar.gz
+
+    - name: Build NewTerm
+      run: |
+        make package FINALVERSION=1.0.0
+        make package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.0
+
+    - name: Upload Package
+      uses: actions/upload-artifact@v3
+      with:
+        name: newterm-ios6
+        path: packages/*.deb
+
+  release:
+    name: Create Release
+    runs-on: macos-11
+    needs: build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/*/*.deb
+        body_path: RELEASE_NOTES.md
+        draft: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
