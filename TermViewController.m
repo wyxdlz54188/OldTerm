@@ -80,11 +80,11 @@
 }
 
 - (void)showSettings {
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:@"Settings"
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Settings"
                                                          message:@"NewTerm iOS 6 Settings\n\n• Font: Monospace\n• Colors: Classic\n• Shell: /bin/sh"
                                                         delegate:nil
                                                cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil] autorelease];
+                                               otherButtonTitles:nil];
     [alertView show];
 }
 
@@ -92,11 +92,11 @@
     NSString *text = self.termView.buffer;
     [UIPasteboard generalPasteboard].string = text;
     
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:@"Copied"
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Copied"
                                                          message:@"Terminal text copied to clipboard"
                                                         delegate:nil
                                                cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil] autorelease];
+                                               otherButtonTitles:nil];
     [alertView show];
 }
 
