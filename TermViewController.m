@@ -110,6 +110,7 @@
 
 - (void)dealloc {
     // ARC handles memory management automatically
+    // Properties: termView, sessionManager, toolbar, newTabButton, settingsButton, copyButton
 }
 
 @end

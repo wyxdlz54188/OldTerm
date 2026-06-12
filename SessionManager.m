@@ -4,7 +4,6 @@
 #import <sys/wait.h>
 #import <unistd.h>
 #import <fcntl.h>
-#import <utmp.h>
 #import <libutil.h>
 
 @implementation SessionManager
