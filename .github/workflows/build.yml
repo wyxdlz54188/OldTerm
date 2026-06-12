@@ -23,10 +23,10 @@ jobs:
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
         echo "$HOME/theos/bin" >> $GITHUB_PATH
         
-    - name: Download iOS SDK
+    - name: Download iOS 6.1 SDK
       run: |
         mkdir -p $THEOS/sdks
-        curl -L "https://github.com/theos/sdks/releases/download/15.0/iPhoneOS15.0.sdk.tar.gz" -o /tmp/sdk.tar.gz
+        curl -L "https://github.com/xybp888/iOS-SDKs/releases/download/master/iPhoneOS6.1.sdk.tar.gz" -o /tmp/sdk.tar.gz
         tar -xzf /tmp/sdk.tar.gz -C $THEOS/sdks
         rm /tmp/sdk.tar.gz
         ls -la $THEOS/sdks/
@@ -36,7 +36,7 @@ jobs:
         export THEOS_PROJECT_DIR=$PWD
         export PATH="$HOME/theos/bin:$PATH"
         which gmake
-        gmake package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=15.0
+        gmake package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.1
         ls -la packages/
 
     - name: Upload Package

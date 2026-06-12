@@ -1,4 +1,4 @@
-export TARGET := iphone:6.0:6.0
+export TARGET := iphone:6.1:6.1
 export ARCHS := armv7 armv7s
 INSTALL_TARGET_PROCESSES := NewTerm
 

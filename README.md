@@ -1,14 +1,14 @@
-# NewTerm for iOS 6
+# NewTerm for iOS 6.1
 
 [![Build Status](https://img.shields.io/badge/build-Theos-orange.svg)]()
-[![Platform](https://img.shields.io/badge/platform-iOS%206.0+-lightgrey.svg)]()
+[![Platform](https://img.shields.io/badge/platform-iOS%206.1.3+-lightgrey.svg)]()
 [![Architecture](https://img.shields.io/badge/arch-armv7%20armv7s-blue.svg)]()
 
-**wyxdlz54188.newterm** - NewTerm terminal emulator ported to iOS 6 devices
+**wyxdlz54188.newterm** - NewTerm terminal emulator for iOS 6.1.3 devices
 
 ## Overview
 
-This is a port of [NewTerm](https://github.com/hbang/NewTerm) for iOS 6 devices. The original NewTerm requires iOS 14.0+, but this version has been rewritten in Objective-C to support older devices.
+This is a port of [NewTerm](https://github.com/hbang/NewTerm) for iOS 6.1.3 devices. The original NewTerm requires iOS 14.0+, but this version has been rewritten in Objective-C to support older devices running iOS 6.1.3.
 
 ## Supported Devices
 
@@ -21,7 +21,7 @@ This is a port of [NewTerm](https://github.com/hbang/NewTerm) for iOS 6 devices.
 
 ## System Requirements
 
-- iOS 6.0 or later
+- iOS 6.1.3 or later
 - Jailbroken device
 - OpenSSH installed (via Cydia)
 
