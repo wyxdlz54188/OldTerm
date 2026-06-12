@@ -24,35 +24,46 @@ jobs:
         echo "$HOME/theos/bin" >> $GITHUB_PATH
         
     - name: Download iOS 6.0 SDK
+      id: sdk_download
       run: |
         mkdir -p $THEOS/sdks
+        echo "=== Downloading iPhoneOS6.0 SDK ==="
         curl -L "https://github.com/GrowtopiaJaw/iPhoneOS-SDK/releases/download/v1.0/iPhoneOS6.0.sdk.zip" -o /tmp/iPhoneOS6.0.sdk.zip
-        unzip -q /tmp/iPhoneOS6.0.sdk.zip -d /tmp/
-        # Check what was extracted and move to correct location
-        if [ -d /tmp/iPhoneOS6.0.sdk ]; then
-          mv /tmp/iPhoneOS6.0.sdk $THEOS/sdks/
-        else
-          # Find the extracted folder and rename it
-          EXTRACTED=$(find /tmp -maxdepth 1 -type d -name "*.sdk" | head -1)
-          if [ -n "$EXTRACTED" ]; then
-            mv $EXTRACTED $THEOS/sdks/iPhoneOS6.0.sdk
+        echo "SDK downloaded, size: $(ls -lh /tmp/iPhoneOS6.0.sdk.zip | awk '{print $5}')"
+        echo "Extracting SDK..."
+        cd /tmp && unzip -q iPhoneOS6.0.sdk.zip 2>&1 || echo "Unzip failed or already exists"
+        echo ""
+        echo "=== Files in /tmp after extraction ==="
+        ls -la /tmp/ | head -30
+        echo ""
+        # Find any .sdk folders
+        echo "=== Searching for .sdk folders ==="
+        find /tmp -maxdepth 1 -type d -name "*.sdk" -print
+        echo ""
+        # Move to Theos
+        for sdk in /tmp/*.sdk; do
+          if [ -d "$sdk" ]; then
+            SDK_NAME=$(basename "$sdk")
+            echo "Moving $sdk to $THEOS/sdks/$SDK_NAME"
+            mv "$sdk" "$THEOS/sdks/"
           fi
-        fi
-        rm /tmp/iPhoneOS6.0.sdk.zip
-        ls -la $THEOS/sdks/
-
-    - name: Fix SDK Version Check
-      run: |
-        # Create symlink for 6.1 to point to 6.0
-        ln -s $THEOS/sdks/iPhoneOS6.0.sdk $THEOS/sdks/iPhoneOS6.1.sdk
+        done
+        rm -f /tmp/iPhoneOS6.0.sdk.zip
+        echo ""
+        echo "=== SDKs in \$THEOS/sdks ==="
         ls -la $THEOS/sdks/
 
     - name: Build NewTerm
       run: |
+        echo "THEOS: $THEOS"
+        echo "THEOS_PROJECT_DIR: $THEOS_PROJECT_DIR"
+        echo "=== Available SDKs ==="
+        ls -la $THEOS/sdks/
+        echo ""
         export THEOS_PROJECT_DIR=$PWD
         export PATH="$HOME/theos/bin:$PATH"
         which gmake
-        gmake package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.1
+        gmake package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.0
         ls -la packages/
 
     - name: Upload Package
