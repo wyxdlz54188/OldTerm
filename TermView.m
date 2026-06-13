@@ -41,12 +41,17 @@
     self.hiddenInput.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.hiddenInput.spellCheckingType = UITextSpellCheckingTypeNo;
     self.hiddenInput.returnKeyType = UIReturnKeySend;
+    self.hiddenInput.clearsOnBeginEditing = YES;
     self.hiddenInput.delegate = self;
     [self addSubview:self.hiddenInput];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self.hiddenInput becomeFirstResponder];
+    if ([self.hiddenInput isFirstResponder]) {
+        [self.hiddenInput resignFirstResponder];
+    } else {
+        [self.hiddenInput becomeFirstResponder];
+    }
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -137,13 +142,14 @@
     }
     
     if ([string isEqualToString:@"\b"] || [string isEqualToString:@"\x7f"]) {
+        [self appendText:@"\b \b"];
         [self.sessionManager sendCommand:@"\x7f"];
         return NO;
     }
     
     if (string.length > 0) {
-        [self.sessionManager sendCommand:string];
         [self appendText:string];
+        [self.sessionManager sendCommand:string];
         return NO;
     }
     
@@ -159,7 +165,6 @@
 #pragma mark - SessionManagerDelegate
 
 - (void)sessionDidConnect {
-    [self appendText:@"\n[Connected to local session]\n"];
     [self.hiddenInput becomeFirstResponder];
 }
 

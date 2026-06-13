@@ -19,10 +19,10 @@
     self.title = @"NewTerm";
     
     self.sessionManager = [[SessionManager alloc] init];
-    self.sessionManager.delegate = self.termView;
     
     self.termView = [[TermView alloc] initWithFrame:self.view.bounds];
     self.termView.sessionManager = self.sessionManager;
+    self.sessionManager.delegate = self.termView;
     self.termView.hiddenInput.keyboardType = UIKeyboardTypeASCIICapable;
     [self.view addSubview:self.termView];
     
@@ -30,7 +30,6 @@
     
     [self.termView appendText:@"NewTerm for iOS 6\n"];
     [self.termView appendText:@"wyxdlz54188.newterm\n\n"];
-    [self.termView appendText:@"Type 'help' for available commands.\n\n"];
     
     [self newTerminalSession];
 }

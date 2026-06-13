@@ -48,11 +48,13 @@
     pid_t pid = forkpty(&master, NULL, NULL, &win);
     
     if (pid < 0) {
-        NSLog(@"Failed to create PTY");
+        NSLog(@"Failed to create PTY: %d", errno);
         return;
     } else if (pid == 0) {
-        execl("/bin/sh", "sh", "-l", NULL);
-        exit(1);
+        setenv("TERM", "vt100", 1);
+        setenv("PS1", "mobile$ ", 1);
+        execl("/bin/sh", "sh", NULL);
+        exit(127);
     }
     
     _ptyFd = master;
@@ -62,24 +64,26 @@
     
     [self startReadingPTY];
     
-    NSLog(@"Local shell started (PID: %d)", pid);
+    NSLog(@"Local shell started (PID: %d, FD: %d)", pid, _ptyFd);
 }
 
 - (void)startReadingPTY {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        if (_ptyFd > 0) {
-            char buffer[4096];
-            ssize_t bytesRead = read(_ptyFd, buffer, sizeof(buffer));
-            
-            if (bytesRead > 0) {
-                NSData *data = [NSData dataWithBytes:buffer length:bytesRead];
-                if ([_delegate respondsToSelector:@selector(session:didReceiveData:)]) {
-                    [_delegate session:self didReceiveData:data];
-                }
-            }
-            
-            [self startReadingPTY];
+    if (_ptyFd <= 0) {
+        return;
+    }
+    
+    char buffer[4096];
+    ssize_t bytesRead = read(_ptyFd, buffer, sizeof(buffer));
+    
+    if (bytesRead > 0) {
+        NSData *data = [NSData dataWithBytes:buffer length:bytesRead];
+        if ([_delegate respondsToSelector:@selector(session:didReceiveData:)]) {
+            [_delegate session:self didReceiveData:data];
         }
+    }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.01 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self startReadingPTY];
     });
 }
 
