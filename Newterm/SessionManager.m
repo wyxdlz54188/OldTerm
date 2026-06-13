@@ -115,6 +115,13 @@
     }
 }
 
+- (void)sendCommand:(NSString *)command {
+    if (self.isConnected && _ptyFd > 0) {
+        const char *str = [command UTF8String];
+        write(_ptyFd, str, strlen(str));
+    }
+}
+
 - (void)sendData:(NSData *)data {
     if (_ptyFd > 0) {
         write(_ptyFd, [data bytes], [data length]);

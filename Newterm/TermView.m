@@ -312,7 +312,7 @@
     [self setNeedsDisplay];
 }
 
-#pragma mark - UITextFieldDelegate（键盘输入转发）
+#pragma mark - UITextFieldDelegate
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     if ([string length] == 0) {
