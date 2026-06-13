@@ -16,9 +16,9 @@
 @property (nonatomic, retain) TermView *termView;
 @property (nonatomic, retain) SessionManager *sessionManager;
 @property (nonatomic, retain) UIToolbar *toolbar;
-@property (nonatomic, retain) UIBarButtonItem *newTabButton;
-@property (nonatomic, retain) UIBarButtonItem *settingsButton;
-@property (nonatomic, retain) UIBarButtonItem *copyButton;
+@property (nonatomic, retain, getter=getNewButton) UIBarButtonItem *newTabButton;
+@property (nonatomic, retain, getter=getSettingsBtn) UIBarButtonItem *settingsButton;
+@property (nonatomic, retain, getter=getCopyBtn) UIBarButtonItem *copyButton;
 @property (nonatomic, assign) BOOL isConnected;
 
 - (void)newTerminalSession;
