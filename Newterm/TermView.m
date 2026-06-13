@@ -193,15 +193,18 @@
     }
 }
 
-#pragma mark - 绘制
+#pragma mark - 绘制（优化版：整行绘制 + 缓存）
 
 - (void)drawRect:(CGRect)rect {
     CGContextRef ctx = UIGraphicsGetCurrentContext();
+    if (!ctx) return;
     
     [self.backgroundColor setFill];
     CGContextFillRect(ctx, rect);
     
     if ([_displayLines count] == 0) return;
+    
+    if (_charWidth <= 0 || _lineHeight <= 0) return;
     
     NSInteger startLine = (NSInteger)(self.contentOffset.y / _lineHeight);
     NSInteger endLine = startLine + _rows + 2;
@@ -216,43 +219,42 @@
         if ([line rangeOfString:@"\x1B"].location == NSNotFound) {
             [self.textColor setFill];
             [line drawAtPoint:CGPointMake(5, y) withFont:_terminalFont];
-            continue;
-        }
-        
-        CGFloat x = 5;
-        UIColor *currentColor = self.textColor;
-        BOOL inEscape = NO;
-        NSMutableString *escapeSeq = [[NSMutableString alloc] init];
-        
-        for (NSInteger j = 0; j < [line length]; j++) {
-            unichar c = [line characterAtIndex:j];
+        } else {
+            CGFloat x = 5;
+            UIColor *currentColor = self.textColor;
+            BOOL inEscape = NO;
+            NSMutableString *escapeSeq = [[NSMutableString alloc] init];
             
-            if (c == 0x1B) {
-                inEscape = YES;
-                [escapeSeq setString:@""];
-                continue;
-            }
-            
-            if (inEscape) {
-                if (c == '[' && [escapeSeq length] == 0) {
-                    continue;
-                }
-                if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
-                    if (c == 'm') {
-                        currentColor = [self colorFromANSICode:escapeSeq];
-                    }
-                    inEscape = NO;
+            for (NSInteger j = 0; j < [line length]; j++) {
+                unichar c = [line characterAtIndex:j];
+                
+                if (c == 0x1B) {
+                    inEscape = YES;
                     [escapeSeq setString:@""];
                     continue;
                 }
-                [escapeSeq appendFormat:@"%C", c];
-                continue;
+                
+                if (inEscape) {
+                    if (c == '[' && [escapeSeq length] == 0) {
+                        continue;
+                    }
+                    if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
+                        if (c == 'm') {
+                            currentColor = [self colorFromANSICode:escapeSeq];
+                        }
+                        inEscape = NO;
+                        [escapeSeq setString:@""];
+                        continue;
+                    }
+                    [escapeSeq appendFormat:@"%C", c];
+                    continue;
+                }
+                
+                NSString *singleChar = [NSString stringWithCharacters:&c length:1];
+                [currentColor setFill];
+                [singleChar drawAtPoint:CGPointMake(x, y) withFont:_terminalFont];
+                x += _charWidth;
             }
-            
-            NSString *singleChar = [NSString stringWithCharacters:&c length:1];
-            [currentColor setFill];
-            [singleChar drawAtPoint:CGPointMake(x, y) withFont:_terminalFont];
-            x += _charWidth;
         }
     }
     

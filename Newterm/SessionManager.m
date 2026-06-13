@@ -51,10 +51,11 @@
         NSLog(@"Failed to create PTY: %d", errno);
         return;
     } else if (pid == 0) {
-        // 子进程：设置环境变量
         setenv("TERM", "xterm-color", 1);
         setenv("PS1", "\\u@\\h \\w\\$ ", 1);
         setenv("HOME", "/var/mobile", 1);
+        
+        system("stty erase ^? 2>/dev/null");
         
         execl("/bin/bash", "bash", "--login", NULL);
         execl("/bin/sh", "sh", NULL);
@@ -118,7 +119,6 @@
     if (self.isConnected && _ptyFd > 0) {
         const char *str = [command UTF8String];
         write(_ptyFd, str, strlen(str));
-        NSLog(@"Sent command: %@", command);
     }
 }
 

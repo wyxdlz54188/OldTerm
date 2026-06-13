@@ -37,10 +37,11 @@
         NSLog(@"Failed to create PTY");
         return;
     } else if (_pid == 0) {
-        // 子进程：设置环境变量
         setenv("TERM", "xterm-color", 1);
         setenv("PS1", "\\u@\\h \\w\\$ ", 1);
         setenv("HOME", "/var/mobile", 1);
+        
+        system("stty erase ^? 2>/dev/null");
         
         const char *shellPath = [_shellPath UTF8String];
         const char *shellName = [[_shellPath lastPathComponent] UTF8String];
