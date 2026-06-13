@@ -55,14 +55,9 @@ jobs:
 
     - name: Build NewTerm
       run: |
-        echo "THEOS: $THEOS"
-        echo "THEOS_PROJECT_DIR: $THEOS_PROJECT_DIR"
-        echo "=== Available SDKs ==="
-        ls -la $THEOS/sdks/
-        echo ""
-        export THEOS_PROJECT_DIR=$PWD
+        export THEOS_PROJECT_DIR=$PWD/Newterm
+        cd $THEOS_PROJECT_DIR
         export PATH="$HOME/theos/bin:$PATH"
-        which gmake
         gmake package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.0
         ls -la packages/
 
@@ -70,4 +65,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: newterm-ios6
-        path: packages/*.deb
+        path: Newterm/packages/*.deb
