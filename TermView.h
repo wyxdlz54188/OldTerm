@@ -1,10 +1,10 @@
 #import <UIKit/UIKit.h>
 #import "VT100Parser.h"
-#import "SessionManager.h"
+#import "SessionManager.h"          // ← 加这行
 
 @class SessionManager;
 
-@interface TermView : UIScrollView <UIScrollViewDelegate, UITextFieldDelegate, SessionManagerDelegate> {
+@interface TermView : UIScrollView <UIScrollViewDelegate, UITextFieldDelegate, SessionManagerDelegate> {  // ← 加 SessionManagerDelegate
     VT100Parser *_parser;
     SessionManager *_sessionManager;
     UITextField *_hiddenInput;
