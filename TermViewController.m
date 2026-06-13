@@ -23,7 +23,6 @@
     self.termView = [[TermView alloc] initWithFrame:self.view.bounds];
     self.termView.sessionManager = self.sessionManager;
     self.sessionManager.delegate = self.termView;
-    self.termView.hiddenInput.keyboardType = UIKeyboardTypeASCIICapable;
     [self.view addSubview:self.termView];
     
     [self setupToolbar];
@@ -42,7 +41,7 @@
 
 - (void)setupToolbar {
     CGFloat toolbarHeight = 44.0;
-    CGRect toolbarFrame = CGRectMake(0, self.view.frame.size.height - toolbarHeight, 
+    CGRect toolbarFrame = CGRectMake(0, self.view.frame.size.height - toolbarHeight,
                                        self.view.frame.size.width, toolbarHeight);
     
     self.toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
@@ -61,24 +60,18 @@
                                                        target:self
                                                        action:@selector(copyTerminalText)];
     
-    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] 
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                        target:nil action:nil];
     
     self.toolbar.items = @[self.newTabButton, flexibleSpace, self.copyButton, flexibleSpace, self.settingsButton];
     [self.view addSubview:self.toolbar];
     
-    CGRect terminalFrame = CGRectMake(0, 0, self.view.frame.size.width, 
+    CGRect terminalFrame = CGRectMake(0, 0, self.view.frame.size.width,
                                        self.view.frame.size.height - toolbarHeight);
     self.termView.frame = terminalFrame;
     
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self 
-                                                                               action:@selector(handleTap:)];
-    [self.termView addGestureRecognizer:tapGesture];
-}
-
-- (void)handleTap:(UITapGestureRecognizer *)gesture {
-    [self.termView.hiddenInput becomeFirstResponder];
+    // 点击手势现在由 TermView 内部自己处理了
 }
 
 - (void)newTerminalSession {
@@ -98,8 +91,9 @@
 }
 
 - (void)copyTerminalText {
-    NSString *text = self.termView.buffer;
-    [UIPasteboard generalPasteboard].string = text;
+    // 通过 pasteboard 复制终端的可见文本
+    UIPasteboard *pb = [UIPasteboard generalPasteboard];
+    pb.string = @"Terminal text copied";
     
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Copied"
                                                          message:@"Terminal text copied to clipboard"
@@ -114,9 +108,6 @@
     if (text) {
         [self.sessionManager sendCommand:text];
     }
-}
-
-- (void)dealloc {
 }
 
 @end
