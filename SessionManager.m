@@ -53,6 +53,7 @@
     } else if (pid == 0) {
         setenv("TERM", "vt100", 1);
         setenv("PS1", "mobile$ ", 1);
+        execl("/bin/bash", "bash", NULL);
         execl("/bin/sh", "sh", NULL);
         exit(127);
     }
