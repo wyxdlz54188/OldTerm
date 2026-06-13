@@ -41,7 +41,12 @@
 	<array>
 		<string>armv7</string>
 	</array>
-	<key>CFBundleIconFile</key>
-	<string>icon.png</string>
+	<key>CFBundleIconFiles</key>
+	<array>
+		<string>Icon</string>
+		<string>Icon@2x</string>
+		<string>Icon-72</string>
+		<string>Icon-72@2x</string>
+	</array>
 </dict>
 </plist>

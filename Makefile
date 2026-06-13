@@ -20,6 +20,6 @@ NewTerm_FILES := \
 NewTerm_FRAMEWORKS := UIKit Foundation CoreGraphics
 NewTerm_CFLAGS := -fobjc-arc
 NewTerm_LDFLAGS := -Wl,-sectcreate,__TEXT,__info_plist,NewTerm-Info.plist
-NewTerm_RESOURCES := icon.png
+NewTerm_RESOURCES := icon.png Icon.png Icon@2x.png Icon-72.png Icon-72@2x.png
 
 include $(THEOS_MAKE_PATH)/application.mk
