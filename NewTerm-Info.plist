@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>NewTerm</string>
 	<key>CFBundleExecutable</key>
-	<string>newterm</string>
+	<string>NewTerm</string>
 	<key>CFBundleIdentifier</key>
 	<string>wyxdlz54188.newterm</string>
 	<key>CFBundleInfoDictionaryVersion</key>
