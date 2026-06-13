@@ -31,6 +31,14 @@
         _parser = [[VT100Parser alloc] init];
         _parser.delegate = self;
         
+        // 🔥 关键：UIScrollView 配置
+        self.scrollEnabled = YES;
+        self.bounces = YES;
+        self.alwaysBounceVertical = YES;
+        self.showsVerticalScrollIndicator = YES;
+        self.delegate = self;
+        self.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
+        
         [self setupView];
         [self setupHiddenInput];
         [self setupTapGesture];
@@ -45,11 +53,8 @@
 }
 
 - (void)setupView {
-    self.scrollEnabled = YES;
-    self.bounces = NO;
-    self.showsVerticalScrollIndicator = YES;
-    self.alwaysBounceVertical = NO;
-    self.delegate = self;
+    // UIScrollView 本身已经是容器，不需要额外的 contentView
+    // contentSize 在 updateContentSize 中动态更新
     self.contentSize = CGSizeMake(self.frame.size.width, _rows * _lineHeight + 100);
 }
 
@@ -85,7 +90,7 @@
     if (_lineHeight > 0) {
         _rows = (NSInteger)(self.frame.size.height / _lineHeight);
     }
-    self.contentSize = CGSizeMake(self.frame.size.width, MAX(_rows, [_displayLines count]) * _lineHeight + 100);
+    [self updateContentSize];
 }
 
 #pragma mark - 文本处理
@@ -129,6 +134,7 @@
     }
     
     [self updateContentSize];
+    [self scrollToBottom];
     [self setNeedsDisplay];
 }
 
@@ -180,17 +186,30 @@
     [_displayLines addObject:@""];
     [_terminalBuffer setString:@""];
     [self updateContentSize];
+    [self scrollToBottom];
     [self setNeedsDisplay];
 }
 
 - (void)updateContentSize {
     CGFloat totalHeight = [_displayLines count] * _lineHeight + 50;
-    self.contentSize = CGSizeMake(self.frame.size.width, MAX(totalHeight, self.frame.size.height));
-    
-    if (self.contentSize.height > self.frame.size.height) {
-        CGPoint bottomOffset = CGPointMake(0, self.contentSize.height - self.frame.size.height);
-        [self setContentOffset:bottomOffset animated:NO];
-    }
+    // 🔥 关键：contentSize 至少要比可视区域大
+    CGFloat minHeight = MAX(totalHeight, self.frame.size.height);
+    self.contentSize = CGSizeMake(self.frame.size.width, minHeight);
+}
+
+#pragma mark - 🔥 滚动控制
+
+- (void)scrollToBottom {
+    CGFloat bottomY = self.contentSize.height - self.frame.size.height;
+    if (bottomY < 0) bottomY = 0;
+    [self setContentOffset:CGPointMake(0, bottomY) animated:NO];
+}
+
+#pragma mark - UIScrollViewDelegate（检测用户手动滚动）
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    // 用户开始手动滑动，暂时不断开自动滚动
+    // 可以在这里加"锁定滚动"逻辑
 }
 
 #pragma mark - 绘制
@@ -205,6 +224,7 @@
     if ([_displayLines count] == 0) return;
     if (_charWidth <= 0 || _lineHeight <= 0) return;
     
+    // 🔥 基于 contentOffset 计算可见行范围
     NSInteger startLine = (NSInteger)(self.contentOffset.y / _lineHeight);
     NSInteger endLine = startLine + _rows + 2;
     if (endLine > [_displayLines count]) endLine = [_displayLines count];
@@ -212,8 +232,9 @@
     
     for (NSInteger i = startLine; i < endLine; i++) {
         NSString *line = [_displayLines objectAtIndex:i];
-        CGFloat y = (i * _lineHeight) - self.contentOffset.y + 2;
-        if (y + _lineHeight < 0 || y > self.frame.size.height) continue;
+        // 🔥 Y 坐标基于 contentOffset
+        CGFloat y = (i * _lineHeight) + 2;
+        if (y + _lineHeight < self.contentOffset.y || y > self.contentOffset.y + self.frame.size.height) continue;
         
         if ([line rangeOfString:@"\x1B"].location == NSNotFound) {
             [self.textColor setFill];
@@ -257,14 +278,16 @@
         }
     }
     
+    // 🔥 光标绘制（基于 contentOffset）
     if (_cursorVisible && [_displayLines count] > 0) {
         [[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:0.5] setFill];
         NSString *lastLine = [_displayLines lastObject];
         NSInteger visibleLen = [self visibleLengthOfLine:lastLine];
         CGFloat cursorX = 5 + (visibleLen % MAX(1, _columns)) * _charWidth;
-        CGFloat cursorY = (([_displayLines count] - 1) * _lineHeight) - self.contentOffset.y + 2;
+        CGFloat cursorY = (([_displayLines count] - 1) * _lineHeight) + 2;
         
-        if (cursorY >= 0 && cursorY < self.frame.size.height) {
+        // 只绘制可见区域内的光标
+        if (cursorY >= self.contentOffset.y && cursorY < self.contentOffset.y + self.frame.size.height) {
             CGContextFillRect(ctx, CGRectMake(cursorX, cursorY, _charWidth, _lineHeight));
         }
     }
@@ -372,6 +395,7 @@
     if (_lineHeight > 0) {
         _rows = (NSInteger)(self.frame.size.height / _lineHeight);
     }
+    [self updateContentSize];
     [self setNeedsDisplay];
 }
 

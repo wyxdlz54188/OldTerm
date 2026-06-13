@@ -25,5 +25,6 @@
 
 - (void)appendText:(NSString *)text;
 - (void)clearScreen;
+- (void)scrollToBottom;
 
 @end

@@ -21,7 +21,13 @@
     
     self.sessionManager = [[SessionManager alloc] init];
     
-    self.termView = [[TermView alloc] initWithFrame:self.view.bounds];
+    // 🔥 关键：termView 的 frame 要留出 toolbar 的空间
+    CGFloat toolbarHeight = 44.0;
+    CGRect terminalFrame = CGRectMake(0, 0, self.view.frame.size.width,
+                                       self.view.frame.size.height - toolbarHeight);
+    
+    self.termView = [[TermView alloc] initWithFrame:terminalFrame];
+    self.termView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.termView.sessionManager = self.sessionManager;
     self.sessionManager.delegate = self.termView;
     [self.view addSubview:self.termView];
@@ -68,10 +74,6 @@
     
     self.toolbar.items = @[self.newTabButton, flexibleSpace, self.copyButton, flexibleSpace, self.settingsButton];
     [self.view addSubview:self.toolbar];
-    
-    CGRect terminalFrame = CGRectMake(0, 0, self.view.frame.size.width,
-                                       self.view.frame.size.height - toolbarHeight);
-    self.termView.frame = terminalFrame;
 }
 
 - (void)newTerminalSession {
