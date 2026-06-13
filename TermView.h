@@ -1,28 +1,28 @@
 #import <UIKit/UIKit.h>
-#import "SessionManager.h"
+#import "VT100Parser.h"
 
 @class SessionManager;
 
-@interface TermView : UIView <SessionManagerDelegate>
+@interface TermView : UIScrollView <UIScrollViewDelegate, UITextFieldDelegate> {
+    VT100Parser *_parser;
+    SessionManager *_sessionManager;
+    UITextField *_hiddenInput;
+    NSMutableString *_terminalBuffer;
+    NSMutableArray *_displayLines;
+    UIFont *_terminalFont;
+    CGFloat _lineHeight;
+    CGFloat _charWidth;
+    NSInteger _columns;
+    NSInteger _rows;
+    BOOL _cursorVisible;
+}
 
-@property (nonatomic, retain) NSString *buffer;
+@property (nonatomic, retain) SessionManager *sessionManager;
 @property (nonatomic, retain) UIColor *textColor;
 @property (nonatomic, retain) UIColor *backgroundColor;
-@property (nonatomic, retain) UIColor *cursorColor;
-@property (nonatomic, retain) UIFont *terminalFont;
-@property (nonatomic, assign) NSInteger cursorX;
-@property (nonatomic, assign) NSInteger cursorY;
-@property (nonatomic, assign) NSInteger columns;
-@property (nonatomic, assign) NSInteger rows;
 @property (nonatomic, assign) BOOL cursorVisible;
-@property (nonatomic, retain) UITextField *hiddenInput;
-@property (nonatomic, retain) SessionManager *sessionManager;
 
 - (void)appendText:(NSString *)text;
-- (void)sendText:(NSString *)text;
 - (void)clearScreen;
-- (void)moveCursorToRow:(NSInteger)row column:(NSInteger)col;
-- (void)showCursor;
-- (void)hideCursor;
 
 @end
