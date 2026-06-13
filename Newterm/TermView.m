@@ -14,8 +14,12 @@
         CGFloat fontSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"terminalFontSize"];
         if (fontSize < 8.0) fontSize = 14.0;
         _terminalFont = [UIFont fontWithName:@"Courier" size:fontSize];
-        _lineHeight = fontSize + 4.0;
-        _charWidth = fontSize * 0.6;
+        
+        NSString *testChar = @"W";
+        CGSize charSize = [testChar sizeWithFont:_terminalFont];
+        _charWidth = charSize.width;
+        _lineHeight = charSize.height + 2.0;
+        
         _columns = 80;
         _rows = 24;
         _cursorVisible = YES;
@@ -74,8 +78,12 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _columns = (NSInteger)(self.frame.size.width / _charWidth) - 1;
-    _rows = (NSInteger)(self.frame.size.height / _lineHeight);
+    if (_charWidth > 0) {
+        _columns = (NSInteger)(self.frame.size.width / _charWidth) - 1;
+    }
+    if (_lineHeight > 0) {
+        _rows = (NSInteger)(self.frame.size.height / _lineHeight);
+    }
     self.contentSize = CGSizeMake(self.frame.size.width, MAX(_rows, [_displayLines count]) * _lineHeight + 100);
 }
 
@@ -102,12 +110,14 @@
             [_displayLines addObject:line];
         }
         
-        while ([[_displayLines lastObject] length] > _columns) {
+        // 自动换行：跳过 ANSI 序列计算实际长度
+        while ([self visibleLengthOfLine:[_displayLines lastObject]] > _columns && _columns > 0) {
             NSString *longLine = [_displayLines lastObject];
             [_displayLines removeLastObject];
             
-            NSString *firstPart = [longLine substringToIndex:_columns];
-            NSString *secondPart = [longLine substringFromIndex:_columns];
+            NSInteger splitPos = [self splitPositionForLine:longLine atColumn:_columns];
+            NSString *firstPart = [longLine substringToIndex:splitPos];
+            NSString *secondPart = [longLine substringFromIndex:splitPos];
             
             [_displayLines addObject:firstPart];
             [_displayLines addObject:secondPart];
@@ -120,6 +130,49 @@
     
     [self updateContentSize];
     [self setNeedsDisplay];
+}
+
+- (NSInteger)visibleLengthOfLine:(NSString *)line {
+    NSInteger length = 0;
+    BOOL inEscape = NO;
+    for (NSInteger i = 0; i < [line length]; i++) {
+        unichar c = [line characterAtIndex:i];
+        if (c == 0x1B) {
+            inEscape = YES;
+            continue;
+        }
+        if (inEscape) {
+            if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
+                inEscape = NO;
+            }
+            continue;
+        }
+        length++;
+    }
+    return length;
+}
+
+- (NSInteger)splitPositionForLine:(NSString *)line atColumn:(NSInteger)column {
+    NSInteger visible = 0;
+    BOOL inEscape = NO;
+    for (NSInteger i = 0; i < [line length]; i++) {
+        unichar c = [line characterAtIndex:i];
+        if (c == 0x1B) {
+            inEscape = YES;
+            continue;
+        }
+        if (inEscape) {
+            if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
+                inEscape = NO;
+            }
+            continue;
+        }
+        visible++;
+        if (visible > column) {
+            return i;
+        }
+    }
+    return [line length];
 }
 
 - (void)clearScreen {
@@ -139,7 +192,7 @@
     }
 }
 
-#pragma mark - 绘制
+#pragma mark - 绘制（支持 ANSI 颜色）
 
 - (void)drawRect:(CGRect)rect {
     CGContextRef ctx = UIGraphicsGetCurrentContext();
@@ -147,31 +200,83 @@
     [self.backgroundColor setFill];
     CGContextFillRect(ctx, rect);
     
+    if ([_displayLines count] == 0) return;
+    
     NSInteger startLine = (NSInteger)(self.contentOffset.y / _lineHeight);
     NSInteger endLine = startLine + _rows + 2;
     if (endLine > [_displayLines count]) endLine = [_displayLines count];
     if (startLine < 0) startLine = 0;
     
-    [self.textColor setFill];
-    
     for (NSInteger i = startLine; i < endLine; i++) {
         NSString *line = [_displayLines objectAtIndex:i];
-        CGFloat y = (i * _lineHeight) - self.contentOffset.y + 5;
+        CGFloat y = (i * _lineHeight) - self.contentOffset.y + 2;
         if (y + _lineHeight < 0 || y > self.frame.size.height) continue;
         
-        [line drawAtPoint:CGPointMake(5, y) withFont:_terminalFont];
+        CGFloat x = 5;
+        UIColor *currentColor = self.textColor;
+        BOOL inEscape = NO;
+        NSMutableString *escapeSeq = [[NSMutableString alloc] init];
+        
+        for (NSInteger j = 0; j < [line length]; j++) {
+            unichar c = [line characterAtIndex:j];
+            
+            if (c == 0x1B) {
+                inEscape = YES;
+                [escapeSeq setString:@""];
+                continue;
+            }
+            
+            if (inEscape) {
+                if (c == '[' && [escapeSeq length] == 0) {
+                    continue;
+                }
+                if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
+                    if (c == 'm') {
+                        currentColor = [self colorFromANSICode:escapeSeq];
+                    }
+                    inEscape = NO;
+                    [escapeSeq setString:@""];
+                    continue;
+                }
+                [escapeSeq appendFormat:@"%C", c];
+                continue;
+            }
+            
+            NSString *singleChar = [NSString stringWithCharacters:&c length:1];
+            [currentColor setFill];
+            [singleChar drawAtPoint:CGPointMake(x, y) withFont:_terminalFont];
+            x += _charWidth;
+        }
     }
     
+    // 光标
     if (_cursorVisible && [_displayLines count] > 0) {
         [[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:0.5] setFill];
         NSString *lastLine = [_displayLines lastObject];
-        CGFloat cursorX = 5 + ([lastLine length] % _columns) * _charWidth;
-        CGFloat cursorY = (([_displayLines count] - 1) * _lineHeight) - self.contentOffset.y + 5;
+        NSInteger visibleLen = [self visibleLengthOfLine:lastLine];
+        CGFloat cursorX = 5 + (visibleLen % MAX(1, _columns)) * _charWidth;
+        CGFloat cursorY = (([_displayLines count] - 1) * _lineHeight) - self.contentOffset.y + 2;
         
         if (cursorY >= 0 && cursorY < self.frame.size.height) {
             CGContextFillRect(ctx, CGRectMake(cursorX, cursorY, _charWidth, _lineHeight));
         }
     }
+}
+
+- (UIColor *)colorFromANSICode:(NSString *)code {
+    if ([code isEqualToString:@"0"] || [code isEqualToString:@""]) {
+        return self.textColor;
+    }
+    if ([code isEqualToString:@"1"]) return self.textColor;
+    if ([code isEqualToString:@"30"]) return [UIColor blackColor];
+    if ([code isEqualToString:@"31"]) return [UIColor redColor];
+    if ([code isEqualToString:@"32"]) return [UIColor greenColor];
+    if ([code isEqualToString:@"33"]) return [UIColor yellowColor];
+    if ([code isEqualToString:@"34"]) return [UIColor blueColor];
+    if ([code isEqualToString:@"35"]) return [UIColor magentaColor];
+    if ([code isEqualToString:@"36"]) return [UIColor cyanColor];
+    if ([code isEqualToString:@"37"]) return [UIColor whiteColor];
+    return self.textColor;
 }
 
 #pragma mark - 光标闪烁
@@ -199,7 +304,7 @@
     }
     
     if ([string isEqualToString:@""] && range.length > 0) {
-        [_sessionManager sendCommand:@"\x7f"];
+        [_sessionManager sendCommand:@"\b"];
         textField.text = @"";
         return NO;
     }
@@ -242,10 +347,18 @@
     CGFloat fontSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"terminalFontSize"];
     if (fontSize < 8.0) fontSize = 14.0;
     _terminalFont = [UIFont fontWithName:@"Courier" size:fontSize];
-    _lineHeight = fontSize + 4.0;
-    _charWidth = fontSize * 0.6;
-    _columns = (NSInteger)(self.frame.size.width / _charWidth) - 1;
-    _rows = (NSInteger)(self.frame.size.height / _lineHeight);
+    
+    NSString *testChar = @"W";
+    CGSize charSize = [testChar sizeWithFont:_terminalFont];
+    _charWidth = charSize.width;
+    _lineHeight = charSize.height + 2.0;
+    
+    if (_charWidth > 0) {
+        _columns = (NSInteger)(self.frame.size.width / _charWidth) - 1;
+    }
+    if (_lineHeight > 0) {
+        _rows = (NSInteger)(self.frame.size.height / _lineHeight);
+    }
     [self setNeedsDisplay];
 }
 

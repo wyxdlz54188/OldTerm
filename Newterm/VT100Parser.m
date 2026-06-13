@@ -20,12 +20,14 @@
         unichar c = [input characterAtIndex:i];
         
         if (c == 0x1B) {
+            [output appendFormat:@"%C", c];
             _inEscapeSequence = YES;
             _escapeBuffer = @"";
             continue;
         }
         
         if (_inEscapeSequence) {
+            [output appendFormat:@"%C", c];
             _escapeBuffer = [_escapeBuffer stringByAppendingString:[NSString stringWithCharacters:&c length:1]];
             
             if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
@@ -43,8 +45,6 @@
 }
 
 - (void)handleEscapeSequence:(NSString *)sequence {
-    NSLog(@"VT100 Escape Sequence: %@", sequence);
-    
     if ([sequence isEqualToString:@"(null"]) {
     } else if ([sequence hasPrefix:@"["]) {
         if ([sequence isEqualToString:@"[H"]) {
@@ -58,7 +58,6 @@
 }
 
 - (void)dealloc {
-    // ARC handles _escapeBuffer release automatically
 }
 
 @end

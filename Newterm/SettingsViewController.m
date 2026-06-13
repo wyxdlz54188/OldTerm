@@ -10,13 +10,11 @@
     self.title = @"设置";
     self.view.backgroundColor = [UIColor whiteColor];
     
-    // 右上角完成按钮
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                 target:self
                                                                                 action:@selector(dismissSettings)];
     self.navigationItem.rightBarButtonItem = doneButton;
     
-    // 标题
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, self.view.frame.size.width - 40, 30)];
     titleLabel.text = @"NewTerm 设置";
     titleLabel.font = [UIFont boldSystemFontOfSize:20.0];
@@ -24,7 +22,6 @@
     titleLabel.backgroundColor = [UIColor clearColor];
     [self.view addSubview:titleLabel];
     
-    // 字体大小标签
     CGFloat currentSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"terminalFontSize"];
     if (currentSize < 8.0) currentSize = 14.0;
     
@@ -35,7 +32,6 @@
     _fontSizeLabel.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_fontSizeLabel];
     
-    // 滑块
     _fontSizeSlider = [[UISlider alloc] initWithFrame:CGRectMake(20, 110, self.view.frame.size.width - 40, 30)];
     _fontSizeSlider.minimumValue = 8.0;
     _fontSizeSlider.maximumValue = 24.0;
@@ -43,7 +39,6 @@
     [_fontSizeSlider addTarget:self action:@selector(fontSizeChanged:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:_fontSizeSlider];
     
-    // 其他信息
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 160, self.view.frame.size.width - 40, 150)];
     label.text = @"颜色: 绿色终端\n\nShell: /bin/bash\n\n版本: 1.0.0";
     label.numberOfLines = 0;
