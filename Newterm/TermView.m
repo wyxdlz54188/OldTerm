@@ -31,13 +31,12 @@
         _parser = [[VT100Parser alloc] init];
         _parser.delegate = self;
         
-        // 🔥 关键：UIScrollView 配置
+        // UIScrollView 配置（iOS 6 兼容）
         self.scrollEnabled = YES;
         self.bounces = YES;
         self.alwaysBounceVertical = YES;
         self.showsVerticalScrollIndicator = YES;
         self.delegate = self;
-        self.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
         
         [self setupView];
         [self setupHiddenInput];
@@ -53,8 +52,6 @@
 }
 
 - (void)setupView {
-    // UIScrollView 本身已经是容器，不需要额外的 contentView
-    // contentSize 在 updateContentSize 中动态更新
     self.contentSize = CGSizeMake(self.frame.size.width, _rows * _lineHeight + 100);
 }
 
@@ -192,24 +189,16 @@
 
 - (void)updateContentSize {
     CGFloat totalHeight = [_displayLines count] * _lineHeight + 50;
-    // 🔥 关键：contentSize 至少要比可视区域大
     CGFloat minHeight = MAX(totalHeight, self.frame.size.height);
     self.contentSize = CGSizeMake(self.frame.size.width, minHeight);
 }
 
-#pragma mark - 🔥 滚动控制
+#pragma mark - 滚动控制
 
 - (void)scrollToBottom {
     CGFloat bottomY = self.contentSize.height - self.frame.size.height;
     if (bottomY < 0) bottomY = 0;
     [self setContentOffset:CGPointMake(0, bottomY) animated:NO];
-}
-
-#pragma mark - UIScrollViewDelegate（检测用户手动滚动）
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    // 用户开始手动滑动，暂时不断开自动滚动
-    // 可以在这里加"锁定滚动"逻辑
 }
 
 #pragma mark - 绘制
@@ -224,7 +213,6 @@
     if ([_displayLines count] == 0) return;
     if (_charWidth <= 0 || _lineHeight <= 0) return;
     
-    // 🔥 基于 contentOffset 计算可见行范围
     NSInteger startLine = (NSInteger)(self.contentOffset.y / _lineHeight);
     NSInteger endLine = startLine + _rows + 2;
     if (endLine > [_displayLines count]) endLine = [_displayLines count];
@@ -232,7 +220,6 @@
     
     for (NSInteger i = startLine; i < endLine; i++) {
         NSString *line = [_displayLines objectAtIndex:i];
-        // 🔥 Y 坐标基于 contentOffset
         CGFloat y = (i * _lineHeight) + 2;
         if (y + _lineHeight < self.contentOffset.y || y > self.contentOffset.y + self.frame.size.height) continue;
         
@@ -278,7 +265,6 @@
         }
     }
     
-    // 🔥 光标绘制（基于 contentOffset）
     if (_cursorVisible && [_displayLines count] > 0) {
         [[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:0.5] setFill];
         NSString *lastLine = [_displayLines lastObject];
@@ -286,7 +272,6 @@
         CGFloat cursorX = 5 + (visibleLen % MAX(1, _columns)) * _charWidth;
         CGFloat cursorY = (([_displayLines count] - 1) * _lineHeight) + 2;
         
-        // 只绘制可见区域内的光标
         if (cursorY >= self.contentOffset.y && cursorY < self.contentOffset.y + self.frame.size.height) {
             CGContextFillRect(ctx, CGRectMake(cursorX, cursorY, _charWidth, _lineHeight));
         }
@@ -339,14 +324,12 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     if ([string length] == 0) {
-        // 删除键（Backspace）→ 发送 0x7F
         unsigned char del = 0x7F;
         NSData *data = [NSData dataWithBytes:&del length:1];
         [_sessionManager sendData:data];
         return NO;
     }
     
-    // 普通输入字符
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     if (data) {
         [_sessionManager sendData:data];

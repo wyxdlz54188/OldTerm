@@ -24,6 +24,8 @@
 	<true/>
 	<key>MinimumOSVersion</key>
 	<string>6.1</string>
+	<key>UIStatusBarHidden</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -47,6 +49,10 @@
 		<string>Icon@2x</string>
 		<string>Icon-72</string>
 		<string>Icon-72@2x</string>
+	</array>
+	<key>SBAppTags</key>
+	<array>
+		<string>hidden</string>
 	</array>
 </dict>
 </plist>
