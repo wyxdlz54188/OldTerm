@@ -1,6 +1,7 @@
 #import "TermViewController.h"
 #import "TermView.h"
 #import "SessionManager.h"
+#import "SettingsViewController.h"
 
 @implementation TermViewController
 
@@ -51,11 +52,12 @@
                                                                         target:self
                                                                         action:@selector(newTerminalSession)];
     
-    self.settingsButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction
-                                                                         target:self
-                                                                         action:@selector(showSettings)];
+    self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:@"设置"
+                                                            style:UIBarButtonItemStyleBordered
+                                                           target:self
+                                                           action:@selector(showSettings)];
     
-    self.copyButton = [[UIBarButtonItem alloc] initWithTitle:@"Copy"
+    self.copyButton = [[UIBarButtonItem alloc] initWithTitle:@"复制"
                                                         style:UIBarButtonItemStyleBordered
                                                        target:self
                                                        action:@selector(copyTerminalText)];
@@ -70,8 +72,6 @@
     CGRect terminalFrame = CGRectMake(0, 0, self.view.frame.size.width,
                                        self.view.frame.size.height - toolbarHeight);
     self.termView.frame = terminalFrame;
-    
-    // 点击手势现在由 TermView 内部自己处理了
 }
 
 - (void)newTerminalSession {
@@ -82,23 +82,19 @@
 }
 
 - (void)showSettings {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Settings"
-                                                         message:@"NewTerm iOS 6 Settings\n\n• Font: Monospace\n• Colors: Classic\n• Shell: /bin/sh"
-                                                        delegate:nil
-                                               cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil];
-    [alertView show];
+    SettingsViewController *settingsVC = [[SettingsViewController alloc] init];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+    [self presentViewController:navController animated:YES completion:nil];
 }
 
 - (void)copyTerminalText {
-    // 通过 pasteboard 复制终端的可见文本
     UIPasteboard *pb = [UIPasteboard generalPasteboard];
     pb.string = @"Terminal text copied";
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Copied"
-                                                         message:@"Terminal text copied to clipboard"
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"已复制"
+                                                         message:@"终端文本已复制到剪贴板"
                                                         delegate:nil
-                                               cancelButtonTitle:@"OK"
+                                               cancelButtonTitle:@"确定"
                                                otherButtonTitles:nil];
     [alertView show];
 }
