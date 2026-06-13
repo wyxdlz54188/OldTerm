@@ -102,7 +102,10 @@
 - (void)pasteToTerminal {
     NSString *text = [UIPasteboard generalPasteboard].string;
     if (text) {
-        [self.sessionManager sendCommand:text];
+        NSData *pasteData = [text dataUsingEncoding:NSUTF8StringEncoding];
+        if (pasteData) {
+            [self.sessionManager sendData:pasteData];
+        }
     }
 }
 

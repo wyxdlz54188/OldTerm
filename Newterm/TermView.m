@@ -312,28 +312,23 @@
     [self setNeedsDisplay];
 }
 
-#pragma mark - UITextFieldDelegate
+#pragma mark - UITextFieldDelegate（键盘输入转发）
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if ([string isEqualToString:@"\n"]) {
-        [_sessionManager sendCommand:@"\n"];
-        textField.text = @"";
+    if ([string length] == 0) {
+        // 删除键（Backspace）→ 发送 0x7F
+        unsigned char del = 0x7F;
+        NSData *data = [NSData dataWithBytes:&del length:1];
+        [_sessionManager sendData:data];
         return NO;
     }
     
-    if ([string isEqualToString:@""] && range.length > 0) {
-        [_sessionManager sendCommand:@"\x7f"];
-        textField.text = @"";
-        return NO;
+    // 普通输入字符
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    if (data) {
+        [_sessionManager sendData:data];
     }
-    
-    if ([string length] > 0) {
-        [_sessionManager sendCommand:string];
-        textField.text = @"";
-        return NO;
-    }
-    
-    return YES;
+    return NO;
 }
 
 #pragma mark - SessionManagerDelegate

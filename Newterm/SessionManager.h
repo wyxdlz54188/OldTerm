@@ -23,6 +23,6 @@
 
 - (void)connectToHost:(NSString *)host port:(NSInteger)port;
 - (void)disconnect;
-- (void)sendCommand:(NSString *)command;
+- (void)sendData:(NSData *)data;
 
 @end
