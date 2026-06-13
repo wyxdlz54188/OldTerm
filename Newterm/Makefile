@@ -8,14 +8,8 @@ include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME := NewTerm
 
-NewTerm_FILES := \
-  main.m \
-  NewTermAppDelegate.m \
-  TermViewController.m \
-  TermView.m \
-  SessionManager.m \
-  VT100Parser.m \
-  PtySession.m
+# 自动识别当前目录所有 .m 文件
+NewTerm_FILES := $(wildcard *.m)
 
 NewTerm_FRAMEWORKS := UIKit Foundation CoreGraphics
 NewTerm_CFLAGS := -fobjc-arc

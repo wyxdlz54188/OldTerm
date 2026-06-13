@@ -1,29 +1,109 @@
-#import <UIKit/UIKit.h>
+#import "TermViewController.h"
+#import "TermView.h"
+#import "SessionManager.h"
+#import "SettingsViewController.h"
 
-@class TermView;
-@class SessionManager;
+@implementation TermViewController
 
-@interface TermViewController : UIViewController {
-    TermView *_termView;
-    SessionManager *_sessionManager;
-    UIToolbar *_toolbar;
-    UIBarButtonItem *_newTabButton;
-    UIBarButtonItem *_settingsButton;
-    UIBarButtonItem *_copyButton;
-    BOOL _isConnected;
+@synthesize termView = _termView, sessionManager = _sessionManager;
+@synthesize toolbar = _toolbar, isConnected = _isConnected;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
+        _isConnected = NO;
+    }
+    return self;
 }
 
-@property (nonatomic, retain) TermView *termView;
-@property (nonatomic, retain) SessionManager *sessionManager;
-@property (nonatomic, retain) UIToolbar *toolbar;
-@property (nonatomic, retain, getter=getNewButton) UIBarButtonItem *newTabButton;
-@property (nonatomic, retain, getter=getSettingsBtn) UIBarButtonItem *settingsButton;
-@property (nonatomic, retain, getter=getCopyBtn) UIBarButtonItem *copyButton;
-@property (nonatomic, assign) BOOL isConnected;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"NewTerm";
+    
+    self.sessionManager = [[SessionManager alloc] init];
+    
+    self.termView = [[TermView alloc] initWithFrame:self.view.bounds];
+    self.termView.sessionManager = self.sessionManager;
+    self.sessionManager.delegate = self.termView;
+    [self.view addSubview:self.termView];
+    
+    [self setupToolbar];
+    
+    [self.termView appendText:@"NewTerm for iOS 6\n"];
+    [self.termView appendText:@"wyxdlz54188.newterm\n\n"];
+    
+    [self newTerminalSession];
+}
 
-- (void)newTerminalSession;
-- (void)showSettings;
-- (void)copyTerminalText;
-- (void)pasteToTerminal;
+- (void)viewDidUnload {
+    [super viewDidUnload];
+    self.termView = nil;
+    self.sessionManager = nil;
+}
+
+- (void)setupToolbar {
+    CGFloat toolbarHeight = 44.0;
+    CGRect toolbarFrame = CGRectMake(0, self.view.frame.size.height - toolbarHeight,
+                                       self.view.frame.size.width, toolbarHeight);
+    
+    self.toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
+    self.toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+    
+    self.newTabButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                        target:self
+                                                                        action:@selector(newTerminalSession)];
+    
+    self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:@"设置"
+                                                            style:UIBarButtonItemStyleBordered
+                                                           target:self
+                                                           action:@selector(showSettings)];
+    
+    self.copyButton = [[UIBarButtonItem alloc] initWithTitle:@"复制"
+                                                        style:UIBarButtonItemStyleBordered
+                                                       target:self
+                                                       action:@selector(copyTerminalText)];
+    
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                       target:nil action:nil];
+    
+    self.toolbar.items = @[self.newTabButton, flexibleSpace, self.copyButton, flexibleSpace, self.settingsButton];
+    [self.view addSubview:self.toolbar];
+    
+    CGRect terminalFrame = CGRectMake(0, 0, self.view.frame.size.width,
+                                       self.view.frame.size.height - toolbarHeight);
+    self.termView.frame = terminalFrame;
+}
+
+- (void)newTerminalSession {
+    if (!self.isConnected) {
+        [self.sessionManager connectToHost:@"localhost" port:22];
+        self.isConnected = YES;
+    }
+}
+
+- (void)showSettings {
+    SettingsViewController *settingsVC = [[SettingsViewController alloc] init];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+    [self presentViewController:navController animated:YES completion:nil];
+}
+
+- (void)copyTerminalText {
+    UIPasteboard *pb = [UIPasteboard generalPasteboard];
+    pb.string = @"Terminal text copied";
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"已复制"
+                                                         message:@"终端文本已复制到剪贴板"
+                                                        delegate:nil
+                                               cancelButtonTitle:@"确定"
+                                               otherButtonTitles:nil];
+    [alertView show];
+}
+
+- (void)pasteToTerminal {
+    NSString *text = [UIPasteboard generalPasteboard].string;
+    if (text) {
+        [self.sessionManager sendCommand:text];
+    }
+}
 
 @end
