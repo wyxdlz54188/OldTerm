@@ -51,9 +51,12 @@
         NSLog(@"Failed to create PTY: %d", errno);
         return;
     } else if (pid == 0) {
-        setenv("TERM", "vt100", 1);
-        setenv("PS1", "mobile$ ", 1);
-        execl("/bin/bash", "bash", NULL);
+        // 子进程：设置环境变量
+        setenv("TERM", "xterm-color", 1);
+        setenv("PS1", "\\u@\\h \\w\\$ ", 1);
+        setenv("HOME", "/var/mobile", 1);
+        
+        execl("/bin/bash", "bash", "--login", NULL);
         execl("/bin/sh", "sh", NULL);
         exit(127);
     }
@@ -123,7 +126,6 @@
     if (self.isConnected) {
         [self disconnect];
     }
-    // ARC handles _host release automatically
 }
 
 @end

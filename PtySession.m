@@ -21,7 +21,7 @@
 
 - (void)start {
     if (_shellPath == nil) {
-        _shellPath = @"/bin/sh";
+        _shellPath = @"/bin/bash";
     }
     
     struct winsize win = {
@@ -37,9 +37,14 @@
         NSLog(@"Failed to create PTY");
         return;
     } else if (_pid == 0) {
+        // 子进程：设置环境变量
+        setenv("TERM", "xterm-color", 1);
+        setenv("PS1", "\\u@\\h \\w\\$ ", 1);
+        setenv("HOME", "/var/mobile", 1);
+        
         const char *shellPath = [_shellPath UTF8String];
         const char *shellName = [[_shellPath lastPathComponent] UTF8String];
-        execl(shellPath, shellName, "-l", NULL);
+        execl(shellPath, shellName, "--login", NULL);
         exit(1);
     }
     
@@ -99,7 +104,6 @@
     if (_pid > 0) {
         [self close];
     }
-    // ARC handles _shellPath release automatically
 }
 
 @end
