@@ -90,9 +90,15 @@ self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@
     UIPasteboard *pb = [UIPasteboard generalPasteboard];
     pb.string = @"Terminal text copied";
     
-    [AlertHelper showAlertWithTitle:NSLocalizedString(@"已复制", nil)
-                                 message:NSLocalizedString(@"终端文本已复制到剪贴板", nil)
-                          viewController:self];
+    #pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"已复制", nil)
+                                                    message:NSLocalizedString(@"终端文本已复制到剪贴板", nil)
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                          otherButtonTitles:nil];
+[alert show];
+#pragma clang diagnostic pop
 }
 
 - (void)pasteToTerminal {
