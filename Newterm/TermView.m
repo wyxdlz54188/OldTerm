@@ -37,6 +37,11 @@
         self.alwaysBounceVertical = YES;
         self.showsVerticalScrollIndicator = YES;
         self.delegate = self;
+        self.decelerationRate = UIScrollViewDecelerationRateNormal;
+        
+        // 离屏渲染优化
+        self.layer.shouldRasterize = NO;
+        self.clearsContextBeforeDrawing = YES;
         
         [self setupView];
         [self setupHiddenInput];
@@ -207,6 +212,7 @@
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     if (!ctx) return;
     
+    // 仅绘制可见区域
     [self.backgroundColor setFill];
     CGContextFillRect(ctx, rect);
     
@@ -214,14 +220,14 @@
     if (_charWidth <= 0 || _lineHeight <= 0) return;
     
     NSInteger startLine = (NSInteger)(self.contentOffset.y / _lineHeight);
-    NSInteger endLine = startLine + _rows + 2;
+    NSInteger endLine = startLine + _rows + 1;
     if (endLine > [_displayLines count]) endLine = [_displayLines count];
     if (startLine < 0) startLine = 0;
     
+    // 批量绘制优化
     for (NSInteger i = startLine; i < endLine; i++) {
         NSString *line = [_displayLines objectAtIndex:i];
         CGFloat y = (i * _lineHeight) + 2;
-        if (y + _lineHeight < self.contentOffset.y || y > self.contentOffset.y + self.frame.size.height) continue;
         
         if ([line rangeOfString:@"\x1B"].location == NSNotFound) {
             [self.textColor setFill];
@@ -231,8 +237,9 @@
             UIColor *currentColor = self.textColor;
             BOOL inEscape = NO;
             NSMutableString *escapeSeq = [[NSMutableString alloc] init];
+            NSInteger lineLen = [line length];
             
-            for (NSInteger j = 0; j < [line length]; j++) {
+            for (NSInteger j = 0; j < lineLen; j++) {
                 unichar c = [line characterAtIndex:j];
                 
                 if (c == 0x1B) {
@@ -324,16 +331,20 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     if ([string length] == 0) {
-        unsigned char del = 0x7F;
+        // Backspace/Delete key
+        unsigned char del = 0x7F; // DEL character
         NSData *data = [NSData dataWithBytes:&del length:1];
         [_sessionManager sendData:data];
+        _hiddenInput.text = @"";
         return NO;
     }
     
+    // Normal text input
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     if (data) {
         [_sessionManager sendData:data];
     }
+    _hiddenInput.text = @"";
     return NO;
 }
 

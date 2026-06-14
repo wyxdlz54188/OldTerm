@@ -2,8 +2,8 @@
 
 @implementation VT100Parser
 
-// @synthesize escapeBuffer = _escapeBuffer, inEscapeSequence = _inEscapeSequence; // removed (ARC)
-// @synthesize delegate = _delegate; // removed (ARC)
+@synthesize escapeBuffer = _escapeBuffer, inEscapeSequence = _inEscapeSequence;
+@synthesize delegate = _delegate;
 
 - (id)init {
     if ((self = [super init])) {

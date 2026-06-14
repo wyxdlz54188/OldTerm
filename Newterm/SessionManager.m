@@ -19,54 +19,21 @@
     return self;
 }
 
-- (void)connectToHost:(NSString *)host
-                  port:(NSInteger)port
-             completion:(void(^)(NSError *error))completion {
+- (void)connectToHost:(NSString *)host port:(NSInteger)port {
     self.host = host;
     self.port = port;
     
-    NSError *error = nil;
     if ([host isEqualToString:@"localhost"]) {
-        // 本地 shell，尝试启动
-        @try {
-            [self startLocalShell];
-        } @catch (NSException *exception) {
-            // 将异常转为 NSError
-            error = [NSError errorWithDomain:@"com.newterm.session"
-                                        code:1001
-                                    userInfo:@{NSLocalizedDescriptionKey:exception.reason}];
-        }
+        [self startLocalShell];
     } else {
-        // 远程连接当前未实现，返回错误
-        error = [NSError errorWithDomain:@"com.newterm.session"
-                                    code:1002
-                                userInfo:@{NSLocalizedDescriptionKey:
-                                          [NSString stringWithFormat:NSLocalizedString(@"Remote connection to %@:%ld not supported", nil), host, (long)port]}];
+        NSLog(@"Remote connection to %@:%ld (not implemented for iOS 6)", host, (long)port);
     }
     
-    if (error) {
-        if ([_delegate respondsToSelector:@selector(session:didFailWithError:)]) {
-            [_delegate session:self didFailWithError:error];
-        }
-        if (completion) {
-            completion(error);
-        }
-        return;
-    }
-    
-    // 成功连通
-    self.isConnected = YES;
     if ([_delegate respondsToSelector:@selector(sessionDidConnect)]) {
         [_delegate sessionDidConnect];
     }
-    if (completion) {
-        completion(nil);
-    }
-}
-
-// 兼容旧接口（不返回错误）
-- (void)connectToHost:(NSString *)host port:(NSInteger)port {
-    [self connectToHost:host port:port completion:nil];
+    
+    self.isConnected = YES;
 }
 
 - (void)startLocalShell {
@@ -110,18 +77,31 @@
         return;
     }
     
-    char buffer[4096];
-    ssize_t bytesRead = read(_ptyFd, buffer, sizeof(buffer));
-    
-    if (bytesRead > 0) {
-        NSData *data = [NSData dataWithBytes:buffer length:bytesRead];
-        if ([_delegate respondsToSelector:@selector(session:didReceiveData:)]) {
-            [_delegate session:self didReceiveData:data];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        char buffer[4096];
+        
+        while (self->_ptyFd > 0) {
+            ssize_t bytesRead = read(self->_ptyFd, buffer, sizeof(buffer));
+            
+            if (bytesRead > 0) {
+                NSData *data = [NSData dataWithBytes:buffer length:bytesRead];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([self->_delegate respondsToSelector:@selector(session:didReceiveData:)]) {
+                        [self->_delegate session:self didReceiveData:data];
+                    }
+                });
+            } else if (bytesRead < 0 && errno == EAGAIN) {
+                usleep(50000); // 50ms idle sleep
+            } else {
+                break;
+            }
         }
-    }
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.01 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [self startReadingPTY];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([self->_delegate respondsToSelector:@selector(sessionDidDisconnect)]) {
+                [self->_delegate sessionDidDisconnect];
+            }
+        });
     });
 }
 

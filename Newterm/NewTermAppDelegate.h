@@ -5,6 +5,6 @@
 @interface NewTermAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-// @property (strong, nonatomic) TermViewController *viewController; // removed
+@property (strong, nonatomic) TermViewController *viewController;
 
 @end

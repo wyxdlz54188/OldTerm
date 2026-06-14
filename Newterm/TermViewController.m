@@ -2,12 +2,11 @@
 #import "TermView.h"
 #import "SessionManager.h"
 #import "SettingsViewController.h"
-// #import "AlertHelper.h"  // removed
 
 @implementation TermViewController
 
-// @synthesize termView = _termView, sessionManager = _sessionManager; // removed (ARC)
-// @synthesize toolbar = _toolbar, isConnected = _isConnected; // removed (ARC)
+@synthesize termView = _termView, sessionManager = _sessionManager;
+@synthesize toolbar = _toolbar, isConnected = _isConnected;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
@@ -18,7 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = NSLocalizedString(@"NewTerm", nil);
+    self.title = @"NewTerm";
     
     self.sessionManager = [[SessionManager alloc] init];
     
@@ -41,7 +40,11 @@
     [self newTerminalSession];
 }
 
-/* viewDidUnload removed – ARC handles deallocation */
+- (void)viewDidUnload {
+    [super viewDidUnload];
+    self.termView = nil;
+    self.sessionManager = nil;
+}
 
 - (void)setupToolbar {
     CGFloat toolbarHeight = 44.0;
@@ -51,25 +54,25 @@
     self.toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
     self.toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     
-    self.addTabButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
-                 target:self
-                 action:@selector(newTerminalSession)];
+    self.newTabButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                        target:self
+                                                                        action:@selector(newTerminalSession)];
     
-self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"设置", nil)
-                                                             style:UIBarButtonItemStylePlain
-                                                            target:self
-                                                            action:@selector(showSettings)];
+    self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:@"设置"
+                                                            style:UIBarButtonItemStyleBordered
+                                                           target:self
+                                                           action:@selector(showSettings)];
     
-    self.copyBarButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Copy", nil)
-                                                    style:UIBarButtonItemStylePlain
-                                                   target:self
-                                                   action:@selector(copyTerminalText)];
+    self.copyButton = [[UIBarButtonItem alloc] initWithTitle:@"复制"
+                                                        style:UIBarButtonItemStyleBordered
+                                                       target:self
+                                                       action:@selector(copyTerminalText)];
     
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                        target:nil action:nil];
     
-    self.toolbar.items = @[self.addTabButton, flexibleSpace, self.copyBarButton, flexibleSpace, self.settingsButton];
+    self.toolbar.items = @[self.newTabButton, flexibleSpace, self.copyButton, flexibleSpace, self.settingsButton];
     [self.view addSubview:self.toolbar];
 }
 
@@ -90,15 +93,12 @@ self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@
     UIPasteboard *pb = [UIPasteboard generalPasteboard];
     pb.string = @"Terminal text copied";
     
-    #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"已复制", nil)
-                                                    message:NSLocalizedString(@"终端文本已复制到剪贴板", nil)
-                                                   delegate:nil
-                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                          otherButtonTitles:nil];
-[alert show];
-#pragma clang diagnostic pop
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"已复制"
+                                                         message:@"终端文本已复制到剪贴板"
+                                                        delegate:nil
+                                               cancelButtonTitle:@"确定"
+                                               otherButtonTitles:nil];
+    [alertView show];
 }
 
 - (void)pasteToTerminal {

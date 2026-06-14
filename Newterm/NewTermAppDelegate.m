@@ -6,14 +6,12 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    TermViewController *vc = [[TermViewController alloc] init];
-    self.window.rootViewController = vc;
+    self.viewController = [[TermViewController alloc] initWithNibName:nil bundle:nil];
+    self.window.rootViewController = self.viewController;
     
     [self.window makeKeyAndVisible];
     
-    #ifdef DEBUG
     NSLog(@"NewTerm for iOS 6 launched!");
-#endif
     
     return YES;
 }

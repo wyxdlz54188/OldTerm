@@ -8,7 +8,7 @@
 
 @implementation PtySession
 
-// @synthesize delegate = _delegate, shellPath = _shellPath, masterFd = _masterFd, pid = _pid; // removed (ARC)
+@synthesize delegate = _delegate, shellPath = _shellPath, masterFd = _masterFd, pid = _pid;
 
 - (id)initWithShell:(NSString *)shell {
     if ((self = [super init])) {
@@ -21,12 +21,7 @@
 
 - (void)start {
     if (_shellPath == nil) {
-        NSString *bundleShell = [[NSBundle mainBundle] pathForResource:@"bash" ofType:nil];
-    if (bundleShell) {
-        _shellPath = bundleShell;
-    } else {
-        _shellPath = @"/bin/sh"; // fallback for non‑jailbroken devices
-    }
+        _shellPath = @"/bin/bash";
     }
     
     struct winsize win = {
@@ -44,7 +39,7 @@
     } else if (_pid == 0) {
         setenv("TERM", "xterm-color", 1);
         setenv("PS1", "\\u@\\h \\w\\$ ", 1);
-        setenv("HOME", [NSHomeDirectory() UTF8String], 1);
+        setenv("HOME", "/var/mobile", 1);
         
         system("stty erase ^? 2>/dev/null");
         
@@ -56,9 +51,7 @@
     
     fcntl(_masterFd, F_SETFL, fcntl(_masterFd, F_GETFL, 0) | O_NONBLOCK);
     
-    #ifdef DEBUG
     NSLog(@"PTY session started (PID: %d)", _pid);
-#endif
     
     [self startReading];
 }
@@ -105,9 +98,7 @@
         _masterFd = -1;
     }
     
-    #ifdef DEBUG
     NSLog(@"PTY session closed");
-#endif
 }
 
 - (void)dealloc {
