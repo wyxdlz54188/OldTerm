@@ -2,6 +2,8 @@
 
 @implementation AlertHelper
 
+#pragma clang diagnostic ignored "-Wstrict-selector-match"
+
 - (void)showAlertWithTitle:(NSString *)title
                    message:(NSString *)message
             viewController:(UIViewController *)vc {
