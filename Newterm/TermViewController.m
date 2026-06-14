@@ -60,7 +60,7 @@ self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@
                                                             target:self
                                                             action:@selector(showSettings)];
     
-    self.copyButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Copy", nil)
+    self.copyBarButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Copy", nil)
                                                     style:UIBarButtonItemStylePlain
                                                    target:self
                                                    action:@selector(copyTerminalText)];
@@ -69,7 +69,7 @@ self.settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                        target:nil action:nil];
     
-    self.toolbar.items = @[self.addTabButton, flexibleSpace, self.copyButton, flexibleSpace, self.settingsButton];
+    self.toolbar.items = @[self.addTabButton, flexibleSpace, self.copyBarButton, flexibleSpace, self.settingsButton];
     [self.view addSubview:self.toolbar];
 }
 
