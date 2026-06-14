@@ -39,10 +39,6 @@
         self.delegate = self;
         self.decelerationRate = UIScrollViewDecelerationRateNormal;
         
-        // 离屏渲染优化
-        self.layer.shouldRasterize = NO;
-        self.clearsContextBeforeDrawing = YES;
-        
         [self setupView];
         [self setupHiddenInput];
         [self setupTapGesture];
