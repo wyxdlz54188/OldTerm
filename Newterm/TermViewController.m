@@ -2,7 +2,7 @@
 #import "TermView.h"
 #import "SessionManager.h"
 #import "SettingsViewController.h"
-#import "AlertHelper.h"
+// #import "AlertHelper.h"  // removed
 
 @implementation TermViewController
 
