@@ -8,6 +8,7 @@
 @end
 
 @interface SessionManager : NSObject {
+
     __unsafe_unretained id<SessionManagerDelegate> _delegate;
     NSString *_host;
     NSInteger _port;
@@ -27,8 +28,11 @@
  * Passing nil for completion retains backward compatibility.
  */
 - (void)connectToHost:(NSString *)host
-                port:(NSInteger)port
-           completion:(void(^)(NSError *error))completion;
+                  port:(NSInteger)port
+             completion:(void(^)(NSError *error))completion;
+
+// 兼容旧接口（不返回错误）
+- (void)connectToHost:(NSString *)host port:(NSInteger)port;
 - (void)disconnect;
 - (void)sendCommand:(NSString *)command;
 - (void)sendData:(NSData *)data;
