@@ -9,13 +9,13 @@
 + (void)showAlertWithTitle:(NSString *)title
 +                 message:(NSString *)message
 +          viewController:(UIViewController *)vc;
-+
-+/**
+
+/**
  * Show an alert with an OK button and a custom handler.
  */
 + (void)showAlertWithTitle:(NSString *)title
 +                 message:(NSString *)message
-+          viewController:(UIViewController *)vc;
++          viewController:(UIViewController *)vc
 +              okHandler:(void(^)(void))okHandler;
-+
-+@end
+
+@end
