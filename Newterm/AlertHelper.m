@@ -1,14 +1,15 @@
+#import <UIKit/UIKit.h>
 #import "AlertHelper.h"
 
 @implementation AlertHelper
 
-- (void)showAlertWithTitle:(NSString *)title      // 第10行：添加 -
+- (void)showAlertWithTitle:(NSString *)title
                    message:(NSString *)message
             viewController:(UIViewController *)vc {
     [self showAlertWithTitle:title message:message viewController:vc okHandler:nil];
 }
 
-- (void)showAlertWithTitle:(NSString *)title      // 第16行：添加 -
+- (void)showAlertWithTitle:(NSString *)title
                    message:(NSString *)message
             viewController:(UIViewController *)vc
                 okHandler:(void(^)(void))okHandler {
