@@ -1,6 +1,5 @@
 #include "MTController.h"
 #include "MTRowView.h"
-#include "MTScratchpad.h"
 #import "VT100.h"
 
 @interface UIKeyboardImpl
@@ -723,15 +722,11 @@ static NSString* getTitle(VT100* terminal) {
     NSUInteger length=text.length;
     [text deleteCharactersInRange:NSMakeRange(length-blankspan,blankspan)];
   }
-  MTScratchpad* scratch=[[MTScratchpad alloc]
-   initWithText:text fontSize:CTFontGetSize(ctFont) darkBG:darkBG];
-  scratch.title=getTitle(activeTerminal);
-  UINavigationController* nav=[[UINavigationController alloc]
-   initWithRootViewController:scratch];
-  [scratch release];
-  nav.navigationBar.barStyle=darkBG?UIBarStyleBlack:UIBarStyleDefault;
-  [self presentModalViewController:nav animated:YES];
-  [nav release];
+  // Present reflow view as alert (MTScratchpad not ported)
+  UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Reflow"
+   message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+  [alertView show];
+  [alertView release];
 }
 -(void)ctrlLock:(UIMenuController*)menu {
   ctrlLock=menu.menuVisible=YES;
