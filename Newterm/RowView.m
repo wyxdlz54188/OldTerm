@@ -92,7 +92,7 @@ static UIColor *colorForIndex(int idx) {
 
     flushRun();
 
-    _ctLine = CTLineCreateWithAttributedString((CFAttributedStringRef)attrStr);
+    _ctLine = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
 
     CGFloat ascent, descent, leading;
     CTLineGetTypographicBounds(_ctLine, &ascent, &descent, &leading);
