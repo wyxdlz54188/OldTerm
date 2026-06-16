@@ -7,6 +7,13 @@
 #import <util.h>
 #import <signal.h>
 
+@interface SessionManager () {
+    int _ptyFd;
+    pid_t _childPid;
+    NSFileHandle *_fileHandle;
+}
+@end
+
 @implementation SessionManager
 
 @synthesize delegate = _delegate, host = _host, port = _port, isConnected = _isConnected;
@@ -17,7 +24,7 @@
         _isConnected = NO;
         _ptyFd = -1;
         _childPid = -1;
-        _readSource = NULL;
+        _fileHandle = nil;
     }
     return self;
 }
@@ -65,11 +72,10 @@
         setenv("PS1", "\\u@\\h \\w\\$ ", 1);
         setenv("HOME", "/var/mobile", 1);
 
-        const char *shellPath = "/bin/bash";
         if (execve("/usr/bin/login",
             (char *[]){"login", "-fp", getlogin(), NULL},
             (char *[]){"TERM=xterm", NULL}) == -1) {
-            execl(shellPath, "bash", "--login", NULL);
+            execl("/bin/bash", "bash", "--login", NULL);
             execl("/bin/sh", "sh", NULL);
         }
         exit(127);
@@ -80,74 +86,61 @@
 
     fcntl(_ptyFd, F_SETFL, fcntl(_ptyFd, F_GETFL, 0) | O_NONBLOCK);
 
-    [self setupReadSource];
+    [self setupReadHandler];
 
     NSLog(@"Shell started (PID: %d, FD: %d)", pid, _ptyFd);
 }
 
-- (void)setupReadSource {
+- (void)setupReadHandler {
     if (_ptyFd <= 0) return;
 
-    _readSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ,
-        (uintptr_t)_ptyFd, 0, dispatch_get_main_queue());
+    _fileHandle = [[NSFileHandle alloc] initWithFileDescriptor:_ptyFd closeOnDealloc:NO];
 
-    dispatch_source_set_event_handler(_readSource, ^{
-        [self ptyRead];
-    });
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(ptyDataAvailable:)
+                                                 name:NSFileHandleReadCompletionNotification
+                                               object:_fileHandle];
 
-    dispatch_source_set_cancel_handler(_readSource, ^{
-        int fd = (int)dispatch_source_get_handle(_readSource);
-        if (fd > 0) close(fd);
-    });
-
-    dispatch_resume(_readSource);
+    [_fileHandle readInBackgroundAndNotify];
 }
 
-- (void)ptyRead {
-    unsigned char databuf[4096];
-    ssize_t datalen;
+- (void)ptyDataAvailable:(NSNotification *)notification {
+    NSData *data = [[notification userInfo] objectForKey:NSFileHandleNotificationDataItem];
 
-    datalen = read(_ptyFd, databuf, sizeof(databuf));
-
-    if (datalen > 0) {
-        NSData *data = [NSData dataWithBytes:databuf length:datalen];
+    if (data && [data length] > 0) {
         if ([_delegate respondsToSelector:@selector(session:didReceiveData:)]) {
             [_delegate session:self didReceiveData:data];
         }
+        [_fileHandle readInBackgroundAndNotify];
         return;
     }
 
-    if (datalen < 0) {
-        if (errno == EINTR || errno == EAGAIN) return;
-        kill(_childPid, SIGKILL);
-    }
-
-    if (_readSource) {
-        dispatch_source_cancel(_readSource);
-        _readSource = NULL;
-    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSFileHandleReadCompletionNotification
+                                                  object:_fileHandle];
 
     int status = 0;
     waitpid(_childPid, &status, 0);
 
-    if (datalen == 0 && WIFEXITED(status)) {
+    if (data && [data length] == 0 && WIFEXITED(status)) {
         char exitMsg[64];
         int len = snprintf(exitMsg, sizeof(exitMsg), "\r\n[Exit %d]\r\n", WEXITSTATUS(status));
-        NSData *data = [NSData dataWithBytes:exitMsg length:len];
+        NSData *exitData = [NSData dataWithBytes:exitMsg length:len];
         if ([_delegate respondsToSelector:@selector(session:didReceiveData:)]) {
-            [_delegate session:self didReceiveData:data];
+            [_delegate session:self didReceiveData:exitData];
         }
     } else if (WIFSIGNALED(status)) {
         char sigMsg[64];
         int len = snprintf(sigMsg, sizeof(sigMsg), "\r\n[%s]\r\n", strsignal(WTERMSIG(status)));
-        NSData *data = [NSData dataWithBytes:sigMsg length:len];
+        NSData *sigData = [NSData dataWithBytes:sigMsg length:len];
         if ([_delegate respondsToSelector:@selector(session:didReceiveData:)]) {
-            [_delegate session:self didReceiveData:data];
+            [_delegate session:self didReceiveData:sigData];
         }
     }
 
     _ptyFd = -1;
     _childPid = -1;
+    _fileHandle = nil;
 
     if ([_delegate respondsToSelector:@selector(sessionDidDisconnect)]) {
         [_delegate sessionDidDisconnect];
@@ -174,10 +167,11 @@
 }
 
 - (void)disconnect {
-    if (_readSource) {
-        dispatch_source_cancel(_readSource);
-        _readSource = NULL;
-    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSFileHandleReadCompletionNotification
+                                                  object:_fileHandle];
+
+    _fileHandle = nil;
 
     if (_childPid > 0) {
         kill(_childPid, SIGHUP);

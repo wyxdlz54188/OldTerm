@@ -2,13 +2,7 @@
 
 @protocol PtySessionDelegate;
 
-@interface PtySession : NSObject {
-    __unsafe_unretained id<PtySessionDelegate> _delegate;
-    int _masterFd;
-    pid_t _pid;
-    NSString *_shellPath;
-    dispatch_source_t _readSource;
-}
+@interface PtySession : NSObject
 
 @property (nonatomic, unsafe_unretained) id<PtySessionDelegate> delegate;
 @property (nonatomic, retain) NSString *shellPath;

@@ -7,15 +7,7 @@
 - (void)session:(id)session didFailWithError:(NSError *)error;
 @end
 
-@interface SessionManager : NSObject {
-    __unsafe_unretained id<SessionManagerDelegate> _delegate;
-    NSString *_host;
-    NSInteger _port;
-    BOOL _isConnected;
-    int _ptyFd;
-    pid_t _childPid;
-    dispatch_source_t _readSource;
-}
+@interface SessionManager : NSObject
 
 @property (nonatomic, unsafe_unretained) id<SessionManagerDelegate> delegate;
 @property (nonatomic, retain) NSString *host;
