@@ -1,5 +1,6 @@
 #import "TermView.h"
 #import "SessionManager.h"
+#import "RowView.h"
 
 static CGFloat getScreenHeight(UIScrollView *view) {
     CGSize size = view.bounds.size;
@@ -9,15 +10,9 @@ static CGFloat getScreenHeight(UIScrollView *view) {
 }
 
 typedef enum {
-    kTapZoneTopLeft,
-    kTapZoneTop,
-    kTapZoneTopRight,
-    kTapZoneLeft,
-    kTapZoneCenter,
-    kTapZoneRight,
-    kTapZoneBottomLeft,
-    kTapZoneBottom,
-    kTapZoneBottomRight,
+    kTapZoneTopLeft, kTapZoneTop, kTapZoneTopRight,
+    kTapZoneLeft, kTapZoneCenter, kTapZoneRight,
+    kTapZoneBottomLeft, kTapZoneBottom, kTapZoneBottomRight,
 } TapZone;
 
 static TapZone getTapZone(UIGestureRecognizer *gesture, CGPoint *outPoint) {
@@ -51,49 +46,9 @@ static TapZone getTapZone(UIGestureRecognizer *gesture, CGPoint *outPoint) {
 @synthesize sessionManager = _sessionManager, textColor = _textColor;
 @synthesize backgroundColor = _backgroundColor, cursorVisible = _cursorVisible;
 
-static UIColor *sColorTable[256];
-static BOOL sColorTableInited = NO;
-
-+ (void)initialize {
-    if (sColorTableInited) return;
-    sColorTableInited = YES;
-
-    sColorTable[0]  = [[UIColor alloc] initWithRed:0.00 green:0.00 blue:0.00 alpha:1];
-    sColorTable[1]  = [[UIColor alloc] initWithRed:0.67 green:0.00 blue:0.00 alpha:1];
-    sColorTable[2]  = [[UIColor alloc] initWithRed:0.00 green:0.67 blue:0.00 alpha:1];
-    sColorTable[3]  = [[UIColor alloc] initWithRed:0.67 green:0.67 blue:0.00 alpha:1];
-    sColorTable[4]  = [[UIColor alloc] initWithRed:0.00 green:0.00 blue:0.67 alpha:1];
-    sColorTable[5]  = [[UIColor alloc] initWithRed:0.67 green:0.00 blue:0.67 alpha:1];
-    sColorTable[6]  = [[UIColor alloc] initWithRed:0.00 green:0.67 blue:0.67 alpha:1];
-    sColorTable[7]  = [[UIColor alloc] initWithRed:0.67 green:0.67 blue:0.67 alpha:1];
-    sColorTable[8]  = [[UIColor alloc] initWithRed:0.33 green:0.33 blue:0.33 alpha:1];
-    sColorTable[9]  = [[UIColor alloc] initWithRed:1.00 green:0.33 blue:0.33 alpha:1];
-    sColorTable[10] = [[UIColor alloc] initWithRed:0.33 green:1.00 blue:0.33 alpha:1];
-    sColorTable[11] = [[UIColor alloc] initWithRed:1.00 green:1.00 blue:0.33 alpha:1];
-    sColorTable[12] = [[UIColor alloc] initWithRed:0.33 green:0.33 blue:1.00 alpha:1];
-    sColorTable[13] = [[UIColor alloc] initWithRed:1.00 green:0.33 blue:1.00 alpha:1];
-    sColorTable[14] = [[UIColor alloc] initWithRed:0.33 green:1.00 blue:1.00 alpha:1];
-    sColorTable[15] = [[UIColor alloc] initWithRed:1.00 green:1.00 blue:1.00 alpha:1];
-
-    for (int i = 0; i < 216; i++) {
-        int r = i / 36;
-        int g = (i / 6) % 6;
-        int b = i % 6;
-        CGFloat cr = (r > 0) ? (CGFloat)(r * 40 + 55) / 255.0 : 0.0;
-        CGFloat cg = (g > 0) ? (CGFloat)(g * 40 + 55) / 255.0 : 0.0;
-        CGFloat cb = (b > 0) ? (CGFloat)(b * 40 + 55) / 255.0 : 0.0;
-        sColorTable[16 + i] = [[UIColor alloc] initWithRed:cr green:cg blue:cb alpha:1];
-    }
-
-    for (int i = 0; i < 24; i++) {
-        CGFloat gs = (CGFloat)(i * 10 + 8) / 255.0;
-        sColorTable[232 + i] = [[UIColor alloc] initWithRed:gs green:gs blue:gs alpha:1];
-    }
-}
-
 - (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
-        self.backgroundColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1.0];
+    if ((self = [super initWithFrame:frame style:UITableViewStylePlain])) {
+        self.backgroundColor = [UIColor blackColor];
         self.textColor = [UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:1.0];
 
         CGFloat fontSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"terminalFontSize"];
@@ -109,6 +64,7 @@ static BOOL sColorTableInited = NO;
         _rows = 24;
         _cursorVisible = YES;
         _ctrlLock = NO;
+        _shouldScrollToBottom = YES;
 
         _terminalBuffer = [[NSMutableString alloc] init];
         _displayLines = [[NSMutableArray alloc] init];
@@ -117,16 +73,15 @@ static BOOL sColorTableInited = NO;
         _parser = [[VT100Parser alloc] init];
         _parser.delegate = self;
 
-        self.scrollEnabled = YES;
+        self.dataSource = self;
+        self.delegate = self;
+        self.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.allowsSelection = NO;
         self.bounces = YES;
         self.alwaysBounceVertical = YES;
-        self.showsVerticalScrollIndicator = YES;
-        self.delegate = self;
 
-        [self setupView];
         [self setupGestures];
         [self setupMenuItems];
-        [self startCursorBlink];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(fontSizeDidChange:)
@@ -136,8 +91,8 @@ static BOOL sColorTableInited = NO;
     return self;
 }
 
-- (void)setupView {
-    self.contentSize = CGSizeMake(self.frame.size.width, _rows * _lineHeight + 100);
+- (BOOL)canBecomeFirstResponder {
+    return YES;
 }
 
 - (void)setupGestures {
@@ -163,11 +118,53 @@ static BOOL sColorTableInited = NO;
     menu.menuItems = @[ctrlItem, pasteItem];
 }
 
-#pragma mark - UIKeyInput
+#pragma mark - UITableViewDataSource
 
-- (BOOL)canBecomeFirstResponder {
-    return YES;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_displayLines count] + 1;
 }
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return _lineHeight;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellId = @"TermCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+        cell.backgroundColor = [UIColor blackColor];
+        RowView *rowView = [[RowView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, _lineHeight)];
+        rowView.defaultColor = self.textColor;
+        rowView.charWidth = _charWidth;
+        cell.backgroundView = rowView;
+    }
+
+    RowView *rowView = (RowView *)cell.backgroundView;
+    rowView.frame = CGRectMake(0, 0, self.frame.size.width, _lineHeight);
+
+    if (indexPath.row < [_displayLines count]) {
+        NSString *line = [_displayLines objectAtIndex:indexPath.row];
+        [rowView renderLine:line];
+    } else {
+        [rowView renderLine:@""];
+    }
+
+    return cell;
+}
+
+#pragma mark - UITableViewDelegate
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGFloat bottomOffset = scrollView.contentSize.height - scrollView.frame.size.height + scrollView.contentInset.bottom;
+    _shouldScrollToBottom = (scrollView.contentOffset.y >= bottomOffset - _lineHeight);
+}
+
+#pragma clang diagnostic pop
+
+#pragma mark - UIKeyInput
 
 - (BOOL)hasText {
     return YES;
@@ -181,20 +178,15 @@ static BOOL sColorTableInited = NO;
         if (c < 0x80) {
             if (_ctrlLock && c >= 0x40 && c <= 0x5f) {
                 unsigned char ctrl = c & 0x1f;
-                NSData *data = [NSData dataWithBytes:&ctrl length:1];
-                [_sessionManager sendData:data];
+                [_sessionManager sendData:[NSData dataWithBytes:&ctrl length:1]];
                 return;
             }
             if (c == '\t') {
-                unsigned char tab = '\t';
-                NSData *data = [NSData dataWithBytes:&tab length:1];
-                [_sessionManager sendData:data];
+                [_sessionManager sendData:[NSData dataWithBytes:"\t" length:1]];
                 return;
             }
             if (c == '\n') {
-                unsigned char cr = '\r';
-                NSData *data = [NSData dataWithBytes:&cr length:1];
-                [_sessionManager sendData:data];
+                [_sessionManager sendData:[NSData dataWithBytes:"\r" length:1]];
                 return;
             }
         }
@@ -206,8 +198,7 @@ static BOOL sColorTableInited = NO;
 - (void)deleteBackward {
     if (!_sessionManager) return;
     unsigned char bs = 0x08;
-    NSData *data = [NSData dataWithBytes:&bs length:1];
-    [_sessionManager sendData:data];
+    [_sessionManager sendData:[NSData dataWithBytes:&bs length:1]];
 }
 
 - (UIKeyboardAppearance)keyboardAppearance {
@@ -267,8 +258,7 @@ static BOOL sColorTableInited = NO;
         default: return;
     }
 
-    NSData *data = [NSData dataWithBytes:&key length:1];
-    [_sessionManager sendData:data];
+    [_sessionManager sendData:[NSData dataWithBytes:&key length:1]];
 }
 
 - (void)handleHoldGesture:(UIGestureRecognizer *)gesture {
@@ -276,74 +266,60 @@ static BOOL sColorTableInited = NO;
 
     if (gesture.state == UIGestureRecognizerStateBegan) {
         if (_repeatTimer) return;
-
         [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
 
         CGPoint origin;
         TapZone zone = getTapZone(gesture, &origin);
 
         switch (zone) {
-            case kTapZoneCenter: {
+            case kTapZoneCenter:
                 _ctrlLock = YES;
-                UIMenuController *menu = [UIMenuController sharedMenuController];
-                CGRect rect = CGRectMake(origin.x, origin.y, 1, 1);
-                [menu setTargetRect:rect inView:self];
-                [menu setMenuVisible:YES animated:YES];
+                [[UIMenuController sharedMenuController] setTargetRect:CGRectMake(origin.x, origin.y, 1, 1) inView:self];
+                [[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
                 return;
-            }
-            case kTapZoneTop:
-            case kTapZoneBottom:
-            case kTapZoneLeft:
-            case kTapZoneRight: {
+            case kTapZoneTop: case kTapZoneBottom:
+            case kTapZoneLeft: case kTapZoneRight: {
                 unsigned char key = 0;
                 switch (zone) {
-                    case kTapZoneTop:    key = 0x10; break;  // up
-                    case kTapZoneBottom: key = 0x0E; break;  // down
-                    case kTapZoneLeft:   key = 0x02; break;  // left
-                    case kTapZoneRight:  key = 0x06; break;  // right
+                    case kTapZoneTop: key = 0x10; break;
+                    case kTapZoneBottom: key = 0x0E; break;
+                    case kTapZoneLeft: key = 0x02; break;
+                    case kTapZoneRight: key = 0x06; break;
                     default: break;
                 }
-                NSNumber *keyNum = [NSNumber numberWithUnsignedChar:key];
                 _repeatTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
                     target:self selector:@selector(repeatTimerFired:)
-                    userInfo:keyNum repeats:YES];
+                    userInfo:[NSNumber numberWithUnsignedChar:key] repeats:YES];
                 return;
             }
             default: return;
         }
-    }
-    else if (gesture.state == UIGestureRecognizerStateEnded ||
-             gesture.state == UIGestureRecognizerStateCancelled) {
-        if (_repeatTimer) {
-            [_repeatTimer invalidate];
-            _repeatTimer = nil;
-        }
+    } else if (gesture.state == UIGestureRecognizerStateEnded ||
+               gesture.state == UIGestureRecognizerStateCancelled) {
+        if (_repeatTimer) { [_repeatTimer invalidate]; _repeatTimer = nil; }
         _ctrlLock = NO;
     }
 }
 
 - (void)handleTwoFingerGesture:(UIGestureRecognizer *)gesture {
     if (gesture.state != UIGestureRecognizerStateBegan) return;
-    if ([self isFirstResponder]) {
+    if ([self isFirstResponder])
         [self hideKeyboard];
-    } else {
+    else
         [self showKeyboard];
-    }
 }
 
 - (void)repeatTimerFired:(NSTimer *)timer {
     unsigned char key = (unsigned char)[timer.userInfo unsignedCharValue];
-    NSData *data = [NSData dataWithBytes:&key length:1];
-    [_sessionManager sendData:data];
+    [_sessionManager sendData:[NSData dataWithBytes:&key length:1]];
 }
 
 #pragma mark - UIMenuController Actions
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
     if (action == @selector(ctrlLockAction:)) return YES;
-    if (action == @selector(pasteAction:)) {
+    if (action == @selector(pasteAction:))
         return [[UIPasteboard generalPasteboard] containsPasteboardTypes:UIPasteboardTypeListString];
-    }
     if (action == @selector(copy:)) return YES;
     return NO;
 }
@@ -354,35 +330,12 @@ static BOOL sColorTableInited = NO;
 
 - (void)pasteAction:(UIMenuController *)menu {
     NSString *text = [UIPasteboard generalPasteboard].string;
-    if (text && _sessionManager) {
+    if (text && _sessionManager)
         [_sessionManager sendData:[text dataUsingEncoding:NSUTF8StringEncoding]];
-    }
 }
 
 - (void)copy:(UIMenuController *)menu {
-    UIPasteboard *pb = [UIPasteboard generalPasteboard];
-    pb.string = [_terminalBuffer copy];
-}
-
-#pragma mark - Layout
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    NSInteger oldColumns = _columns;
-    NSInteger oldRows = _rows;
-
-    if (_charWidth > 0) {
-        _columns = (NSInteger)(self.frame.size.width / _charWidth) - 1;
-    }
-    if (_lineHeight > 0) {
-        _rows = (NSInteger)(self.frame.size.height / _lineHeight);
-    }
-
-    if ((oldColumns != _columns || oldRows != _rows) && _sessionManager) {
-        [_sessionManager resizeToColumns:_columns rows:_rows];
-    }
-
-    [self updateContentSize];
+    [UIPasteboard generalPasteboard].string = [_terminalBuffer copy];
 }
 
 #pragma mark - Text Processing
@@ -392,7 +345,6 @@ static BOOL sColorTableInited = NO;
 
     NSString *parsed = [_parser parseInput:text];
     if (!parsed) parsed = text;
-
     parsed = [parsed stringByReplacingOccurrencesOfString:@"\r" withString:@""];
 
     NSArray *incomingLines = [parsed componentsSeparatedByString:@"\n"];
@@ -407,238 +359,29 @@ static BOOL sColorTableInited = NO;
         } else {
             [_displayLines addObject:line];
         }
-
-        while ([self visibleLengthOfLine:[_displayLines lastObject]] > _columns && _columns > 0) {
-            NSString *longLine = [_displayLines lastObject];
-            [_displayLines removeLastObject];
-
-            NSInteger splitPos = [self splitPositionForLine:longLine atColumn:_columns];
-            NSString *firstPart = [longLine substringToIndex:splitPos];
-            NSString *secondPart = [longLine substringFromIndex:splitPos];
-
-            [_displayLines addObject:firstPart];
-            [_displayLines addObject:secondPart];
-        }
     }
 
-    while ([_displayLines count] > 500) {
+    while ([_displayLines count] > 500)
         [_displayLines removeObjectAtIndex:0];
-    }
 
-    [self updateContentSize];
-    [self scrollToBottom];
-    [self setNeedsDisplay];
-}
+    [self reloadData];
 
-- (NSInteger)visibleLengthOfLine:(NSString *)line {
-    NSInteger length = 0;
-    BOOL inEscape = NO;
-    for (NSInteger i = 0; i < [line length]; i++) {
-        unichar c = [line characterAtIndex:i];
-        if (c == 0x1B) {
-            inEscape = YES;
-            continue;
-        }
-        if (inEscape) {
-            if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
-                inEscape = NO;
-            }
-            continue;
-        }
-        length++;
-    }
-    return length;
-}
-
-- (NSInteger)splitPositionForLine:(NSString *)line atColumn:(NSInteger)column {
-    NSInteger visible = 0;
-    BOOL inEscape = NO;
-    for (NSInteger i = 0; i < [line length]; i++) {
-        unichar c = [line characterAtIndex:i];
-        if (c == 0x1B) {
-            inEscape = YES;
-            continue;
-        }
-        if (inEscape) {
-            if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
-                inEscape = NO;
-            }
-            continue;
-        }
-        visible++;
-        if (visible > column) {
-            return i;
-        }
-    }
-    return [line length];
+    if (_shouldScrollToBottom)
+        [self scrollToBottom];
 }
 
 - (void)clearScreen {
     [_displayLines removeAllObjects];
     [_displayLines addObject:@""];
     [_terminalBuffer setString:@""];
-    [self updateContentSize];
-    [self scrollToBottom];
-    [self setNeedsDisplay];
+    [self reloadData];
 }
-
-- (void)updateContentSize {
-    CGFloat totalHeight = [_displayLines count] * _lineHeight + 50;
-    CGFloat minHeight = MAX(totalHeight, self.frame.size.height);
-    self.contentSize = CGSizeMake(self.frame.size.width, minHeight);
-}
-
-#pragma mark - Scrolling
 
 - (void)scrollToBottom {
-    CGFloat bottomY = self.contentSize.height - self.frame.size.height;
-    if (bottomY < 0) bottomY = 0;
-    [self setContentOffset:CGPointMake(0, bottomY) animated:NO];
-}
-
-#pragma mark - Drawing
-
-- (void)drawRect:(CGRect)rect {
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    if (!ctx) return;
-
-    [self.backgroundColor setFill];
-    CGContextFillRect(ctx, rect);
-
-    if ([_displayLines count] == 0) return;
-    if (_charWidth <= 0 || _lineHeight <= 0) return;
-
-    NSInteger startLine = (NSInteger)(self.contentOffset.y / _lineHeight);
-    NSInteger endLine = startLine + _rows + 2;
-    if (endLine > [_displayLines count]) endLine = [_displayLines count];
-    if (startLine < 0) startLine = 0;
-
-    for (NSInteger i = startLine; i < endLine; i++) {
-        NSString *line = [_displayLines objectAtIndex:i];
-        CGFloat y = (i * _lineHeight) + 2;
-        if (y + _lineHeight < self.contentOffset.y || y > self.contentOffset.y + self.frame.size.height) continue;
-
-        if ([line rangeOfString:@"\x1B"].location == NSNotFound) {
-            [self.textColor setFill];
-            [line drawAtPoint:CGPointMake(5, y) withFont:_terminalFont];
-        } else {
-            CGFloat x = 5;
-            UIColor *currentColor = self.textColor;
-            BOOL inEscape = NO;
-            NSMutableString *escapeSeq = [[NSMutableString alloc] init];
-
-            for (NSInteger j = 0; j < [line length]; j++) {
-                unichar c = [line characterAtIndex:j];
-
-                if (c == 0x1B) {
-                    inEscape = YES;
-                    [escapeSeq setString:@""];
-                    continue;
-                }
-
-                if (inEscape) {
-                    if (c == '[' && [escapeSeq length] == 0) {
-                        continue;
-                    }
-                    if ((c >= 'A' && c <= 'Z') || c == '~' || c == 'm') {
-                        if (c == 'm') {
-                            currentColor = [self colorFromANSICode:escapeSeq];
-                        }
-                        inEscape = NO;
-                        [escapeSeq setString:@""];
-                        continue;
-                    }
-                    [escapeSeq appendFormat:@"%C", c];
-                    continue;
-                }
-
-                NSString *singleChar = [NSString stringWithCharacters:&c length:1];
-                [currentColor setFill];
-                [singleChar drawAtPoint:CGPointMake(x, y) withFont:_terminalFont];
-                x += _charWidth;
-            }
-
-        }
-    }
-
-    if (_cursorVisible && [_displayLines count] > 0) {
-        [[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:0.5] setFill];
-        NSString *lastLine = [_displayLines lastObject];
-        NSInteger visibleLen = [self visibleLengthOfLine:lastLine];
-        CGFloat cursorX = 5 + (visibleLen % MAX(1, _columns)) * _charWidth;
-        CGFloat cursorY = (([_displayLines count] - 1) * _lineHeight) + 2;
-
-        if (cursorY >= self.contentOffset.y && cursorY < self.contentOffset.y + self.frame.size.height) {
-            CGContextFillRect(ctx, CGRectMake(cursorX, cursorY, _charWidth, _lineHeight));
-        }
-    }
-}
-
-- (UIColor *)colorFromANSICode:(NSString *)code {
-    NSArray *parts = [code componentsSeparatedByString:@";"];
-    NSInteger count = [parts count];
-    if (count == 0) return self.textColor;
-
-    NSInteger p0 = [[parts objectAtIndex:0] integerValue];
-
-    if (count >= 3 && p0 == 38 && [[parts objectAtIndex:1] integerValue] == 5) {
-        NSInteger idx = [[parts objectAtIndex:2] integerValue];
-        if (idx >= 0 && idx < 256) return sColorTable[idx];
-        return self.textColor;
-    }
-    if (count >= 3 && p0 == 48 && [[parts objectAtIndex:1] integerValue] == 5) {
-        return self.textColor;
-    }
-    if (count >= 5 && p0 == 38 && [[parts objectAtIndex:1] integerValue] == 2) {
-        CGFloat r = (CGFloat)[[parts objectAtIndex:2] integerValue] / 255.0;
-        CGFloat g = (CGFloat)[[parts objectAtIndex:3] integerValue] / 255.0;
-        CGFloat b = (CGFloat)[[parts objectAtIndex:4] integerValue] / 255.0;
-        return [UIColor colorWithRed:r green:g blue:b alpha:1];
-    }
-    if (count >= 5 && p0 == 48 && [[parts objectAtIndex:1] integerValue] == 2) {
-        return self.textColor;
-    }
-
-    if ([code isEqualToString:@"0"] || [code isEqualToString:@""]) {
-        return self.textColor;
-    }
-    if ([code isEqualToString:@"1"]) return self.textColor;
-
-    switch (p0) {
-        case 30: return sColorTable[0];
-        case 31: return sColorTable[1];
-        case 32: return sColorTable[2];
-        case 33: return sColorTable[3];
-        case 34: return sColorTable[4];
-        case 35: return sColorTable[5];
-        case 36: return sColorTable[6];
-        case 37: return sColorTable[7];
-        case 90: return sColorTable[8];
-        case 91: return sColorTable[9];
-        case 92: return sColorTable[10];
-        case 93: return sColorTable[11];
-        case 94: return sColorTable[12];
-        case 95: return sColorTable[13];
-        case 96: return sColorTable[14];
-        case 97: return sColorTable[15];
-    }
-
-    return self.textColor;
-}
-
-#pragma mark - Cursor Blink
-
-- (void)startCursorBlink {
-    [NSTimer scheduledTimerWithTimeInterval:0.5
-                                     target:self
-                                   selector:@selector(toggleCursor)
-                                   userInfo:nil
-                                    repeats:YES];
-}
-
-- (void)toggleCursor {
-    _cursorVisible = !_cursorVisible;
-    [self setNeedsDisplay];
+    NSInteger count = [_displayLines count];
+    if (count == 0) return;
+    NSIndexPath *lastRow = [NSIndexPath indexPathForRow:count inSection:0];
+    [self scrollToRowAtIndexPath:lastRow atScrollPosition:UITableViewScrollPositionBottom animated:NO];
 }
 
 #pragma mark - SessionManagerDelegate
@@ -656,9 +399,7 @@ static BOOL sColorTableInited = NO;
     NSString *text = [[NSString alloc] initWithBytes:[data bytes]
                                               length:[data length]
                                             encoding:NSUTF8StringEncoding];
-    if (text) {
-        [self appendText:text];
-    }
+    if (text) [self appendText:text];
 }
 
 - (void)session:(id)session didFailWithError:(NSError *)error {
@@ -673,7 +414,7 @@ static BOOL sColorTableInited = NO;
 
 - (void)vt100MoveCursorToHome {
     [_displayLines addObject:@""];
-    [self setNeedsDisplay];
+    [self reloadData];
 }
 
 #pragma mark - Font Size Change
@@ -683,34 +424,24 @@ static BOOL sColorTableInited = NO;
     if (fontSize < 8.0) fontSize = 14.0;
     _terminalFont = [UIFont fontWithName:@"Courier" size:fontSize];
 
-    NSInteger oldColumns = _columns;
-    NSInteger oldRows = _rows;
-
+    NSInteger oldColumns = _columns, oldRows = _rows;
     NSString *testChar = @"W";
     CGSize charSize = [testChar sizeWithFont:_terminalFont];
     _charWidth = charSize.width;
     _lineHeight = charSize.height + 2.0;
 
-    if (_charWidth > 0) {
-        _columns = (NSInteger)(self.frame.size.width / _charWidth) - 1;
-    }
-    if (_lineHeight > 0) {
-        _rows = (NSInteger)(self.frame.size.height / _lineHeight);
-    }
+    if (_charWidth > 0) _columns = (NSInteger)(self.frame.size.width / _charWidth) - 1;
+    if (_lineHeight > 0) _rows = (NSInteger)(self.frame.size.height / _lineHeight);
 
-    if ((oldColumns != _columns || oldRows != _rows) && _sessionManager) {
+    if ((oldColumns != _columns || oldRows != _rows) && _sessionManager)
         [_sessionManager resizeToColumns:_columns rows:_rows];
-    }
 
-    [self updateContentSize];
-    [self setNeedsDisplay];
+    [self reloadData];
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if (_repeatTimer) {
-        [_repeatTimer invalidate];
-    }
+    if (_repeatTimer) [_repeatTimer invalidate];
 }
 
 @end

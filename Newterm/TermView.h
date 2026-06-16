@@ -4,7 +4,7 @@
 
 @class SessionManager;
 
-@interface TermView : UIScrollView <UIScrollViewDelegate, SessionManagerDelegate, VT100ParserDelegate, UIKeyInput> {
+@interface TermView : UITableView <UITableViewDataSource, UITableViewDelegate, SessionManagerDelegate, VT100ParserDelegate, UIKeyInput> {
     VT100Parser *_parser;
     SessionManager *_sessionManager;
     NSMutableString *_terminalBuffer;
@@ -17,6 +17,7 @@
     BOOL _cursorVisible;
     BOOL _ctrlLock;
     NSTimer *_repeatTimer;
+    BOOL _shouldScrollToBottom;
 }
 
 @property (nonatomic, retain) SessionManager *sessionManager;
