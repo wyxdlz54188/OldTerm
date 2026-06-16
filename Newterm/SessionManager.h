@@ -14,16 +14,20 @@
     BOOL _isConnected;
     int _ptyFd;
     pid_t _childPid;
+    dispatch_source_t _readSource;
 }
 
 @property (nonatomic, unsafe_unretained) id<SessionManagerDelegate> delegate;
 @property (nonatomic, retain) NSString *host;
 @property (nonatomic, assign) NSInteger port;
 @property (nonatomic, assign) BOOL isConnected;
+@property (nonatomic, readonly) pid_t childPid;
+@property (nonatomic, readonly) int ptyFd;
 
 - (void)connectToHost:(NSString *)host port:(NSInteger)port;
 - (void)disconnect;
 - (void)sendCommand:(NSString *)command;
 - (void)sendData:(NSData *)data;
+- (void)resizeToColumns:(NSInteger)cols rows:(NSInteger)rows;
 
 @end

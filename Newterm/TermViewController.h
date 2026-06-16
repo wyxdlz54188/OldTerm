@@ -25,5 +25,6 @@
 - (void)showSettings;
 - (void)copyTerminalText;
 - (void)pasteToTerminal;
+- (void)toggleKeyboard;
 
 @end

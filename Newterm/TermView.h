@@ -4,10 +4,9 @@
 
 @class SessionManager;
 
-@interface TermView : UIScrollView <UIScrollViewDelegate, UITextFieldDelegate, SessionManagerDelegate, VT100ParserDelegate> {
+@interface TermView : UIScrollView <UIScrollViewDelegate, SessionManagerDelegate, VT100ParserDelegate, UIKeyInput> {
     VT100Parser *_parser;
     SessionManager *_sessionManager;
-    UITextField *_hiddenInput;
     NSMutableString *_terminalBuffer;
     NSMutableArray *_displayLines;
     UIFont *_terminalFont;
@@ -16,6 +15,8 @@
     NSInteger _columns;
     NSInteger _rows;
     BOOL _cursorVisible;
+    BOOL _ctrlLock;
+    NSTimer *_repeatTimer;
 }
 
 @property (nonatomic, retain) SessionManager *sessionManager;
@@ -26,5 +27,7 @@
 - (void)appendText:(NSString *)text;
 - (void)clearScreen;
 - (void)scrollToBottom;
+- (void)showKeyboard;
+- (void)hideKeyboard;
 
 @end
