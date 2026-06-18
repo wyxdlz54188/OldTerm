@@ -1,7 +1,7 @@
-ARCHS = armv7 arm64
+ARCHS = armv7 armv7s
 TARGET = iphone:latest:4.0
 
-include theos/makefiles/common.mk
+include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME = MTerminal
 MTerminal_FILES = $(wildcard *.m)
