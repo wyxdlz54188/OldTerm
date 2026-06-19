@@ -4,6 +4,7 @@
   UITableView* tableView;
   UISlider* fontSizeSlider;
   UILabel* fontSizeLabel;
+  CGFloat currentFontSize;
 }
 @end
 
@@ -11,6 +12,16 @@
 
 -(void)loadView {
   [self setTitle:@"\u8bbe\u7f6e"];
+
+  // 从 UserDefaults 读取当前字体大小
+  NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
+  NSString* name=[NSBundle mainBundle].bundleIdentifier;
+  NSDictionary* settings=[defaults persistentDomainForName:name];
+  NSNumber* savedSize=[settings objectForKey:@"fontSize"];
+  if([savedSize respondsToSelector:@selector(doubleValue)]){
+    currentFontSize=[savedSize doubleValue];
+  }
+  if(currentFontSize<=0) currentFontSize=10;
 
   UIView* view=[[UIView alloc] initWithFrame:CGRectZero];
   view.autoresizingMask=UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -27,17 +38,11 @@
   [view addSubview:tableView];
   [tableView release];
 
-  NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
-  NSString* name=[NSBundle mainBundle].bundleIdentifier;
-  NSDictionary* settings=[defaults persistentDomainForName:name];
-  CGFloat currentSize=[[settings objectForKey:@"fontSize"] respondsToSelector:@selector(doubleValue)]?
-    [[settings objectForKey:@"fontSize"] doubleValue]:10;
-  if(currentSize<=0) currentSize=10;
-
-  fontSizeSlider=[[[UISlider alloc] initWithFrame:CGRectMake(0,0,200,30)] autorelease];
+  // 创建 fontSizeSlider 并 retain
+  fontSizeSlider=[[UISlider alloc] initWithFrame:CGRectMake(0,0,200,30)];
   fontSizeSlider.minimumValue=6;
   fontSizeSlider.maximumValue=24;
-  fontSizeSlider.value=currentSize;
+  fontSizeSlider.value=currentFontSize;
   [fontSizeSlider addTarget:self action:@selector(fontSizeChanged:)
     forControlEvents:UIControlEventValueChanged];
 }
@@ -66,6 +71,7 @@
       reuseIdentifier:ident] autorelease];
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
 
+    // 创建 fontSizeLabel 并 retain
     fontSizeLabel=[[UILabel alloc] initWithFrame:CGRectMake(0,0,60,30)];
     fontSizeLabel.font=[UIFont boldSystemFontOfSize:16];
     fontSizeLabel.textColor=[UIColor colorWithRed:0.2 green:0.4 blue:0.8 alpha:1];
@@ -74,6 +80,7 @@
     cell.accessoryView=fontSizeLabel;
     [fontSizeLabel release];
 
+    // 设置 slider 的 frame 并添加到 cell
     CGRect frame=fontSizeSlider.frame;
     frame.origin.x=15;
     frame.origin.y=(44-frame.size.height)/2;
@@ -87,7 +94,9 @@
 
 -(void)fontSizeChanged:(UISlider*)slider {
   CGFloat fontSize=round(slider.value);
-  fontSizeLabel.text=[NSString stringWithFormat:@"%.0f pt",fontSize];
+  if(fontSizeLabel){
+    fontSizeLabel.text=[NSString stringWithFormat:@"%.0f pt",fontSize];
+  }
 
   NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
   NSString* name=[NSBundle mainBundle].bundleIdentifier;
@@ -99,6 +108,7 @@
 }
 
 -(void)dealloc {
+  [fontSizeSlider release];
   [super dealloc];
 }
 
