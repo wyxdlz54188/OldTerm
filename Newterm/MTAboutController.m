@@ -54,7 +54,7 @@
             @"</head><body>"
             @"<div class=\"loading\">正在加载...</div>"
             @"<div id=\"content\"></div>"
-            @"<script src=\"https://pan.posc.net/js/marked.min.js\"></script>"
+            @"<script src=\"https://lizirepo.dpdns.org/js/marked.min.js\"></script>"
             @"<script>"
             @"document.addEventListener('DOMContentLoaded',function(){"
             @"  var mdContent=`%@`;"
