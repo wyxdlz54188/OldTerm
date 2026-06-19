@@ -69,7 +69,6 @@
         text = [text stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
         
         UIFont *font = attrs[NSFontAttributeName];
-        UIColor *color = attrs[NSForegroundColorAttributeName];
         NSString *url = attrs[@"MarkdownLinkURL"];
         
         NSMutableString *tagged = [NSMutableString stringWithString:text];
