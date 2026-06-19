@@ -5,12 +5,10 @@ include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME = Newterm
 
-# 原有 MRC 文件
-Newterm_FILES = $(filter-out MarkdownParser.m MarkdownConfiguration.m MarkdownElement.m MarkdownHeader.m MarkdownList.m MarkdownQuote.m MarkdownCode.m MarkdownLink.m MarkdownImage.m MarkdownHorizontalRule.m NSString+Markdown.m, $(wildcard *.m))
+# 所有 .m 文件
+Newterm_FILES = $(wildcard *.m)
 
-# MarkdownKit 文件使用 ARC
-Newterm_FILES += MarkdownParser.m MarkdownConfiguration.m MarkdownElement.m MarkdownHeader.m MarkdownList.m MarkdownQuote.m MarkdownCode.m MarkdownLink.m MarkdownImage.m MarkdownHorizontalRule.m NSString+Markdown.m
-
+# MarkdownKit 文件单独开启 ARC
 MarkdownParser.m_CFLAGS = -fobjc-arc
 MarkdownConfiguration.m_CFLAGS = -fobjc-arc
 MarkdownElement.m_CFLAGS = -fobjc-arc
@@ -27,6 +25,8 @@ Newterm_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit QuartzCore CoreFou
 Newterm_LIBRARIES = util
 Newterm_LDFLAGS = -lSystem_syms
 Newterm_RESOURCE_FILES = Info.plist Icon-72.png Icon-72@2x.png
+
+# 全局 MRC，MarkdownKit 文件通过上面的 _CFLAGS 覆盖为 ARC
 ADDITIONAL_OBJCFLAGS = -fno-objc-arc -include MTerminal_Prefix.pch -Wno-single-bit-bitfield-constant-conversion
 
 include $(THEOS_MAKE_PATH)/application.mk
