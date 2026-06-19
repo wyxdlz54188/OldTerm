@@ -3,7 +3,7 @@ TARGET = iphone:6.0:4.0
 
 include $(THEOS)/makefiles/common.mk
 
-APPLICATION_NAME = NewTerm
+APPLICATION_NAME = Newterm
 Newterm_FILES = $(wildcard *.m)
 Newterm_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit
 Newterm_LIBRARIES = util
