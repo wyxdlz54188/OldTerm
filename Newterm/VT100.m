@@ -98,7 +98,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
 }
 -(id)initWithWidth:(CFIndex)_screenWidth height:(CFIndex)_screenHeight {
   if((self=[super init])){
-    encoding=kCFStringEncodingASCII;
+    encoding=kCFStringEncodingUTF8;  // ✅ 修改：默认UTF-8编码
     screenWidth=_screenWidth;
     screenHeight=_screenHeight;
     tabstops=malloc(tabstops_size=screenWidth);
@@ -107,15 +107,23 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
      .release=(CFArrayReleaseCallBack)screen_line_release});
     indexMap=CFArrayCreateMutable(NULL,0,NULL);
     linesChanged=CFSetCreateMutable(NULL,0,NULL);
+    
+    // ✅ 新增：初始化多字节编码缓冲区
+    encbuf=NULL;
+    encbuf_size=0;
+    encbuf_index=0;
+    [self setEncoding:encoding];  // ✅ 新增：立即分配encbuf
+    
     [self ptyReset];
     int fd;
     pid_t pid=forkpty(&fd,NULL,NULL,&(struct winsize){
      .ws_col=screenWidth,.ws_row=screenHeight});
     if(pid==-1){raiseException(@"forkpty");}
     else if(pid==0){
+      // ✅ 修改：添加UTF-8环境变量
       if(execve("/usr/bin/login",
        (char*[]){"login","-fp",getlogin(),NULL},
-       (char*[]){"TERM=xterm",NULL})==-1)
+       (char*[]){"TERM=xterm","LANG=en_US.UTF-8",NULL})==-1)
         raiseException(@"execve(login)");
     }
     else {
@@ -207,12 +215,11 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
   if(encoding!=_encoding){
     encoding=_encoding;
     // allocate a backlog for multi-byte characters
-    if(encbuf){free(encbuf);}
+    if(encbuf){free(encbuf);encbuf=NULL;}
     CFIndex size=CFStringGetMaximumSizeForEncoding(1,encoding);
-    if((encbuf=(size>1)?malloc(size):NULL)){
-      encbuf_size=size;
-      encbuf_index=0;
-    }
+    encbuf_size=(size>1)?size:1;  // ✅ 修改：始终分配缓冲区
+    encbuf=malloc(encbuf_size);
+    encbuf_index=0;
   }
 }
 -(void)setWidth:(CFIndex)newWidth height:(CFIndex)newHeight {
@@ -972,22 +979,32 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
         if(glCharset>3){glCharset&=3;}
       }
       else {
+        // ✅ 修改：改进的多字节字符处理逻辑
         CFStringRef str;
         if(encbuf){
           encbuf[encbuf_index++]=*dataptr;
           str=CFStringCreateWithBytesNoCopy(NULL,
            encbuf,encbuf_index,encoding,false,kCFAllocatorNull);
-          if(str || encbuf_index==encbuf_size){encbuf_index=0;}
+          if(str){
+            // 成功转换多字节序列
+            uc=CFStringGetCharacterAtIndex(str,0);
+            CFRelease(str);
+            encbuf_index=0;
+          }
+          else if(encbuf_index>=encbuf_size){
+            // 缓冲区已满，放弃当前序列，用替换字符
+            encbuf_index=0;
+            uc=0xFFFD;  // Unicode Replacement Character
+          }
+          else {
+            // 字节不完整，等待更多字节
+            continue;
+          }
         }
         else {
-          str=CFStringCreateWithBytesNoCopy(NULL,
-           dataptr,1,encoding,false,kCFAllocatorNull);
+          // encbuf未分配，跳过此字节（不应该发生）
+          continue;
         }
-        if(!str){continue;}
-        uc=CFStringGetCharacterAtIndex(str,0);
-        CFRelease(str);
-        // skip zero-width characters
-        if(uc==0x200b || uc==0x200c || uc==0x200d || uc==0xfeff){continue;}
       }
       if(OSCString){
         CFStringAppendCharacters(OSCString,&uc,1);

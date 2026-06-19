@@ -1,4 +1,5 @@
 #import "MTSettingsController.h"
+#import "MTAboutController.h"
 
 @interface MTSettingsController () <UITableViewDataSource,UITableViewDelegate> {
   UITableView* tableView;
@@ -11,9 +12,8 @@
 @implementation MTSettingsController
 
 -(void)loadView {
-  [self setTitle:@"\u8bbe\u7f6e"];
+  [self setTitle:@"设置"];
 
-  // 从 UserDefaults 读取当前字体大小
   NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
   NSString* name=[NSBundle mainBundle].bundleIdentifier;
   NSDictionary* settings=[defaults persistentDomainForName:name];
@@ -48,48 +48,80 @@
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView*)tv {
-  return 1;
+  return 2;
 }
 
 -(NSInteger)tableView:(UITableView*)tv numberOfRowsInSection:(NSInteger)section {
-  return 1;
+  if (section == 0) {
+    return 1;
+  } else {
+    return 1;
+  }
 }
 
 -(NSString*)tableView:(UITableView*)tv titleForHeaderInSection:(NSInteger)section {
-  return @"\u7ec8\u7aef\u5b57\u4f53";
+  if (section == 0) {
+    return @"终端字体";
+  } else {
+    return @"应用信息";
+  }
 }
 
 -(NSString*)tableView:(UITableView*)tv titleForFooterInSection:(NSInteger)section {
-  return @"\u8c03\u6574\u7ec8\u7aef\u6587\u672c\u663e\u793a\u5927\u5c0f\uff0c\u5207\u6362\u56de Term \u6807\u7b7e\u540e\u751f\u6548";
+  if (section == 0) {
+    return @"调整终端文本显示大小，切换回 Term 标签后生效";
+  }
+  return nil;
 }
 
 -(UITableViewCell*)tableView:(UITableView*)tv cellForRowAtIndexPath:(NSIndexPath*)indexPath {
-  static NSString* ident=@"fontCell";
-  UITableViewCell* cell=[tv dequeueReusableCellWithIdentifier:ident];
-  if(!cell){
-    cell=[[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
-      reuseIdentifier:ident] autorelease];
-    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+  if (indexPath.section == 0) {
+    static NSString* ident=@"fontCell";
+    UITableViewCell* cell=[tv dequeueReusableCellWithIdentifier:ident];
+    if(!cell){
+      cell=[[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
+        reuseIdentifier:ident] autorelease];
+      cell.selectionStyle=UITableViewCellSelectionStyleNone;
 
-    // 创建 fontSizeLabel 并 retain
-    fontSizeLabel=[[UILabel alloc] initWithFrame:CGRectMake(0,0,60,30)];
-    fontSizeLabel.font=[UIFont boldSystemFontOfSize:16];
-    fontSizeLabel.textColor=[UIColor colorWithRed:0.2 green:0.4 blue:0.8 alpha:1];
-    fontSizeLabel.textAlignment=NSTextAlignmentCenter;
-    fontSizeLabel.text=[NSString stringWithFormat:@"%.0f pt",fontSizeSlider.value];
-    cell.accessoryView=fontSizeLabel;
-    [fontSizeLabel release];
+      fontSizeLabel=[[UILabel alloc] initWithFrame:CGRectMake(0,0,60,30)];
+      fontSizeLabel.font=[UIFont boldSystemFontOfSize:16];
+      fontSizeLabel.textColor=[UIColor colorWithRed:0.2 green:0.4 blue:0.8 alpha:1];
+      fontSizeLabel.textAlignment=NSTextAlignmentCenter;
+      fontSizeLabel.text=[NSString stringWithFormat:@"%.0f pt",fontSizeSlider.value];
+      cell.accessoryView=fontSizeLabel;
+      [fontSizeLabel release];
 
-    // 设置 slider 的 frame 并添加到 cell
-    CGRect frame=fontSizeSlider.frame;
-    frame.origin.x=15;
-    frame.origin.y=(44-frame.size.height)/2;
-    frame.size.width=tv.bounds.size.width-30-70;
-    fontSizeSlider.frame=frame;
-    fontSizeSlider.autoresizingMask=UIViewAutoresizingFlexibleWidth;
-    [cell.contentView addSubview:fontSizeSlider];
+      CGRect frame=fontSizeSlider.frame;
+      frame.origin.x=15;
+      frame.origin.y=(44-frame.size.height)/2;
+      frame.size.width=tv.bounds.size.width-30-70;
+      fontSizeSlider.frame=frame;
+      fontSizeSlider.autoresizingMask=UIViewAutoresizingFlexibleWidth;
+      [cell.contentView addSubview:fontSizeSlider];
+    }
+    return cell;
+  } else {
+    static NSString* aboutIdent=@"aboutCell";
+    UITableViewCell* cell=[tv dequeueReusableCellWithIdentifier:aboutIdent];
+    if(!cell){
+      cell=[[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+        reuseIdentifier:aboutIdent] autorelease];
+      cell.textLabel.text=@"关于 NewTerm";
+      cell.textLabel.textAlignment=NSTextAlignmentCenter;
+      cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+    }
+    return cell;
   }
-  return cell;
+}
+
+-(void)tableView:(UITableView*)tv didSelectRowAtIndexPath:(NSIndexPath*)indexPath {
+  [tv deselectRowAtIndexPath:indexPath animated:YES];
+  
+  if (indexPath.section == 1 && indexPath.row == 0) {
+    MTAboutController* aboutController=[[MTAboutController alloc] init];
+    [self.navigationController pushViewController:aboutController animated:YES];
+    [aboutController release];
+  }
 }
 
 -(void)fontSizeChanged:(UISlider*)slider {

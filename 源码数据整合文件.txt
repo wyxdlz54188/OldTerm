@@ -26,10 +26,136 @@
 │   │   │   │   └── 📄 main
 │   │   │       📁 remotes
 │   │   │           📁 origin
-│   │   │           └── 📄 HEAD
+│   │   │           ├── 📄 HEAD
+│   │   │           └── 📄 main
 │   │   └── 📄 HEAD
 │   │   📁 objects
+│   │   │   📁 01
+│   │   │   └── ⛔ 4110ccb9d60e3941ca8f512a8c7bed37b57081
+│   │   │   📁 02
+│   │   │   ├── ⛔ 0a72ba99af1ea86f744e765c8404bbc2c55119
+│   │   │   └── ⛔ 53f86a7aaaec1a52af80a39e225faf01a2dd82
+│   │   │   📁 04
+│   │   │   └── ⛔ f1d2b5edfbeadfb12bf7b3636cd51e53c82ad7
+│   │   │   📁 09
+│   │   │   └── ⛔ d7da137ee655fba0f8683e27c989819266446d
+│   │   │   📁 0e
+│   │   │   └── ⛔ dfd42c97ccb4bedb24b0e746037af7d85ee1b2
+│   │   │   📁 13
+│   │   │   ├── ⛔ 1cebeaede47e9f4cd51e9155e1750b98040e22
+│   │   │   └── ⛔ c20167812388548328baf1cb89689cbcf11cf1
+│   │   │   📁 19
+│   │   │   └── ⛔ 25dff2453732a5b634da172dfb006db6856c61
+│   │   │   📁 24
+│   │   │   └── ⛔ dc78b63d82f699374f33e701a86c36255d0a30
+│   │   │   📁 28
+│   │   │   └── ⛔ 90e35aa44499d445b872caf48ad9f416a0e09d
+│   │   │   📁 2c
+│   │   │   ├── ⛔ 59526a2fd8b9772e99cb94dc7cf5995b2ce504
+│   │   │   └── ⛔ 7057334ad08913595ea0bfe6660f92dc94ad2d
+│   │   │   📁 30
+│   │   │   └── ⛔ f3ff6e8587bd6d90f659c54372f442872ace4b
+│   │   │   📁 31
+│   │   │   └── ⛔ a366da12897bd7d95803813693b0f1e7928960
+│   │   │   📁 34
+│   │   │   └── ⛔ 7d59c5c4c52eb0be288af9e3774b8adfbb5b85
+│   │   │   📁 36
+│   │   │   └── ⛔ 6bc2ed13981855c0bb53a6e32332c16e334b4c
+│   │   │   📁 39
+│   │   │   └── ⛔ d51501cda52d720f2cb076ed9ecbded5fb8558
+│   │   │   📁 3a
+│   │   │   └── ⛔ d758303ba52b598ef2fa0d5abc1ebb67b3666e
+│   │   │   📁 3b
+│   │   │   └── ⛔ 38781edc3de6761d1a6d6ce9e104bcd7385730
+│   │   │   📁 43
+│   │   │   └── ⛔ d521438ed279499cc0dee153dc54d22faa4ce7
+│   │   │   📁 48
+│   │   │   └── ⛔ 1064deb4595d9de23f6503ecc4ed28459aa9ae
+│   │   │   📁 4b
+│   │   │   └── ⛔ 7abcf0f472e070a15630735c6b94062b5f889e
+│   │   │   📁 4c
+│   │   │   └── ⛔ 332ef84ab80120a456f4658e9ee5be01bc83c7
+│   │   │   📁 4f
+│   │   │   └── ⛔ aca69b22b27ce821823eb92bc8e85b9648fa23
+│   │   │   📁 52
+│   │   │   └── ⛔ 91ac2a023295d75690644276e79d82020e2c35
+│   │   │   📁 5b
+│   │   │   └── ⛔ dbfee87badc95a9e4849b8c5e2d9ab8a47ef87
+│   │   │   📁 60
+│   │   │   └── ⛔ ce4484dadf2ade35d022ec6b684e1cfec611fe
+│   │   │   📁 63
+│   │   │   └── ⛔ 74624ed2caf8acf07c3b7849b97d0dee701fea
+│   │   │   📁 64
+│   │   │   └── ⛔ d68deb45db218fde8e25e7ef5b1ee1b562f746
+│   │   │   📁 6f
+│   │   │   └── ⛔ 948d77282f5a57259fb0fce14877a5b0687603
+│   │   │   📁 79
+│   │   │   └── ⛔ 7836e7c16dd860eed3b9a6d39f4819045a0b9e
+│   │   │   📁 7f
+│   │   │   └── ⛔ 562971b74c31121c746916b19f86e4d227da7f
+│   │   │   📁 83
+│   │   │   └── ⛔ 11226baa2a35758d6b0849db1a843cb1d93214
+│   │   │   📁 89
+│   │   │   └── ⛔ 36086c4b694601e80fec3de7fa82e1bf69de67
+│   │   │   📁 8b
+│   │   │   └── ⛔ e20c6c112deb2bfcebe44ec25598f2a571f710
+│   │   │   📁 8f
+│   │   │   └── ⛔ 4ae91968fa68a0155660f40ce4533bddd5141f
+│   │   │   📁 98
+│   │   │   └── ⛔ 20466ce563ba051d5411737cb134e2e18b8b48
+│   │   │   📁 9a
+│   │   │   └── ⛔ 8e05b918dcc33667c00ed5a16d9af6788b3c77
+│   │   │   📁 a2
+│   │   │   └── ⛔ f101793a449ca162aca01f083fc0f7491bfa91
+│   │   │   📁 a3
+│   │   │   └── ⛔ ac7a800a5e57114a05b1ff606233f211a6be1e
+│   │   │   📁 a8
+│   │   │   └── ⛔ e4cbb7d77d2b68e25f1735143bfac0895454fd
+│   │   │   📁 ab
+│   │   │   └── ⛔ cfa7e328fcdbd96a7c2f875da827a6a83b9692
+│   │   │   📁 b3
+│   │   │   └── ⛔ d384d765e50cbc73354000e2d8c556ee27cec4
+│   │   │   📁 b8
+│   │   │   └── ⛔ 6c2c23595af96b2d034886d950cd8653e2c8ca
+│   │   │   📁 bf
+│   │   │   ├── ⛔ 9c948b7035a83203f23c9c2562869771def67f
+│   │   │   └── ⛔ c9674b59b91ea265c2893208d7a623769da09d
+│   │   │   📁 c3
+│   │   │   └── ⛔ e7f8141a57863e956fcd2265cc037122e2c4aa
+│   │   │   📁 c7
+│   │   │   └── ⛔ e1ab5acf6e1cf2d125fb1ea2731ad8afcc8cfb
+│   │   │   📁 c8
+│   │   │   ├── ⛔ fde858dcf027c704ac63dbc6b4fe7e9f9b3bc5
+│   │   │   └── ⛔ fecb1ba6b146bb0f76a2c093d27f80038881ff
+│   │   │   📁 c9
+│   │   │   └── ⛔ a9321ae604640ea54463f85f9a513f977e7ee5
+│   │   │   📁 ca
+│   │   │   └── ⛔ 6ea39cc480da55578a44a2f3540eb04dc448fd
+│   │   │   📁 ce
+│   │   │   └── ⛔ 7d752647c34e6e7e0da05673ffd2e22ecc3b36
+│   │   │   📁 d3
+│   │   │   └── ⛔ 40d79e29389edfe0546b6fcc7c4481300dabde
+│   │   │   📁 d7
+│   │   │   └── ⛔ 33277e54e419619ba024e37bbbec65560fc2e5
+│   │   │   📁 da
+│   │   │   └── ⛔ 32f0e5f92854f854a827056cacccc98b3f6059
+│   │   │   📁 de
+│   │   │   ├── ⛔ de440ad9034a652a9c6f5c7060be3620940055
+│   │   │   └── ⛔ f80a25f27e1b9701279e25e7a3f1dd5a522df6
+│   │   │   📁 e3
+│   │   │   └── ⛔ 56cb88628b27423beadc7ec9cbfbf84289e5a6
+│   │   │   📁 e5
+│   │   │   └── ⛔ c717538fbbeaba6804e30eabd3b1756f8e154e
+│   │   │   📁 ef
+│   │   │   └── ⛔ b062a8346464337d18bfe57339e1f9779d3435
+│   │   │   📁 f2
+│   │   │   └── ⛔ 982437e5cadb3c5a0f02e69524db0eeb1e5daa
+│   │   │   📁 f3
+│   │   │   └── ⛔ 9ee37198bea0831f44144495ac462aad11995b
 │   │   │   📁 info
+│   │   │       📁 commit-graphs
+│   │   │       ├── 📄 commit-graph-chain
+│   │   │       └── ⛔ graph-45181e0c90a5bf4cb3242df3858f84484b844bf3.graph
 │   │       📁 pack
 │   │       ├── ⛔ pack-1b2af0fb1fa3bf8dabd0374c8b378504006b6cf6.idx
 │   │       ├── ⛔ pack-1b2af0fb1fa3bf8dabd0374c8b378504006b6cf6.pack
@@ -39,8 +165,10 @@
 │   │   │   └── 📄 main
 │   │   │   📁 remotes
 │   │   │       📁 origin
-│   │   │       └── 📄 HEAD
+│   │   │       ├── 📄 HEAD
+│   │   │       └── 📄 main
 │   │       📁 tags
+│   ├── 📄 COMMIT_EDITMSG
 │   ├── 📄 config
 │   ├── 📄 description
 │   ├── 📄 HEAD
@@ -49,32 +177,32 @@
 │   📁 .github
 │       📁 workflows
 │       └── 📄 build.yml
-    📁 Newterm
-    ├── 📄 .gitignore
-    ├── 📄 control
-    ├── ⛔ Icon-72.png
-    ├── ⛔ Icon-72@2x.png
-    ├── ⛔ Icon.png
-    ├── ⛔ Icon@2x.png
-    ├── 📄 Info.plist
-    ├── 📄 main.m
-    ├── 📄 Makefile
-    ├── 📄 MTAppDelegate.h
-    ├── 📄 MTAppDelegate.m
-    ├── 📄 MTController.h
-    ├── 📄 MTController.m
-    ├── 📄 MTerminal_Prefix.pch
-    ├── 📄 MTKBAvoiding.h
-    ├── 📄 MTKBAvoiding.m
-    ├── 📄 MTRowView.h
-    ├── 📄 MTRowView.m
-    ├── 📄 MTScratchpad.h
-    ├── 📄 MTScratchpad.m
-    ├── 📄 MTSettingsController.h
-    ├── 📄 MTSettingsController.m
-    ├── 📄 README.md
-    ├── 📄 VT100.h
-    └── 📄 VT100.m
+│   📁 Newterm
+│   ├── 📄 .gitignore
+│   ├── ⛔ control
+│   ├── ⛔ Icon-72.png
+│   ├── ⛔ Icon-72@2x.png
+│   ├── ⛔ Icon.png
+│   ├── ⛔ Icon@2x.png
+│   ├── 📄 Info.plist
+│   ├── 📄 main.m
+│   ├── 📄 Makefile
+│   ├── 📄 MTAppDelegate.h
+│   ├── ⛔ MTAppDelegate.m
+│   ├── 📄 MTController.h
+│   ├── 📄 MTController.m
+│   ├── 📄 MTerminal_Prefix.pch
+│   ├── 📄 MTKBAvoiding.h
+│   ├── 📄 MTKBAvoiding.m
+│   ├── 📄 MTRowView.h
+│   ├── 📄 MTRowView.m
+│   ├── 📄 MTScratchpad.h
+│   ├── 📄 MTScratchpad.m
+│   ├── 📄 MTSettingsController.h
+│   ├── 📄 MTSettingsController.m
+│   ├── 📄 VT100.h
+│   └── 📄 VT100.m
+└── 📄 Readme.md
 
 ================================================================================
 【文件信息】
@@ -1173,6 +1301,18 @@ test -x "$commitmsg" && exec "$commitmsg" ${1+"$@"}
 
 ================================================================================
 【文件信息】
+完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/objects/info/commit-graphs/commit-graph-chain
+项目内路径：/.git/objects/info/commit-graphs/commit-graph-chain
+文件名：commit-graph-chain
+文件大小：41 字节
+================================================================================
+文件内容：
+45181e0c90a5bf4cb3242df3858f84484b844bf3
+
+【该文件结束】
+
+================================================================================
+【文件信息】
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/config
 项目内路径：/.git/config
 文件名：config
@@ -1215,7 +1355,7 @@ ref: refs/heads/main
 文件大小：41 字节
 ================================================================================
 文件内容：
-d82d66a0c5ce03bce326dc1826e8b5ae8ce229d1
+64d68deb45db218fde8e25e7ef5b1ee1b562f746
 
 【该文件结束】
 
@@ -1233,6 +1373,18 @@ ref: refs/remotes/origin/main
 
 ================================================================================
 【文件信息】
+完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/refs/remotes/origin/main
+项目内路径：/.git/refs/remotes/origin/main
+文件名：main
+文件大小：41 字节
+================================================================================
+文件内容：
+64d68deb45db218fde8e25e7ef5b1ee1b562f746
+
+【该文件结束】
+
+================================================================================
+【文件信息】
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/logs/refs/remotes/origin/HEAD
 项目内路径：/.git/logs/refs/remotes/origin/HEAD
 文件名：HEAD
@@ -1245,13 +1397,50 @@ ref: refs/remotes/origin/main
 
 ================================================================================
 【文件信息】
+完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/logs/refs/remotes/origin/main
+项目内路径：/.git/logs/refs/remotes/origin/main
+文件名：main
+文件大小：1963 字节
+================================================================================
+文件内容：
+d82d66a0c5ce03bce326dc1826e8b5ae8ce229d1 a2f101793a449ca162aca01f083fc0f7491bfa91 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858248 +0800	update by push
+a2f101793a449ca162aca01f083fc0f7491bfa91 2c7057334ad08913595ea0bfe6660f92dc94ad2d wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858571 +0800	update by push
+2c7057334ad08913595ea0bfe6660f92dc94ad2d 3b38781edc3de6761d1a6d6ce9e104bcd7385730 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858895 +0800	update by push
+3b38781edc3de6761d1a6d6ce9e104bcd7385730 a8e4cbb7d77d2b68e25f1735143bfac0895454fd wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859274 +0800	update by push
+a8e4cbb7d77d2b68e25f1735143bfac0895454fd 31a366da12897bd7d95803813693b0f1e7928960 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859412 +0800	update by push
+31a366da12897bd7d95803813693b0f1e7928960 dede440ad9034a652a9c6f5c7060be3620940055 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859540 +0800	update by push
+dede440ad9034a652a9c6f5c7060be3620940055 e356cb88628b27423beadc7ec9cbfbf84289e5a6 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781860131 +0800	update by push
+e356cb88628b27423beadc7ec9cbfbf84289e5a6 09d7da137ee655fba0f8683e27c989819266446d wyxdlz54188 <liyuqili_1379zi@qq.com> 1781863335 +0800	update by push
+09d7da137ee655fba0f8683e27c989819266446d 04f1d2b5edfbeadfb12bf7b3636cd51e53c82ad7 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781863519 +0800	update by push
+04f1d2b5edfbeadfb12bf7b3636cd51e53c82ad7 9a8e05b918dcc33667c00ed5a16d9af6788b3c77 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781865464 +0800	update by push
+9a8e05b918dcc33667c00ed5a16d9af6788b3c77 2c59526a2fd8b9772e99cb94dc7cf5995b2ce504 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781866699 +0800	update by push
+2c59526a2fd8b9772e99cb94dc7cf5995b2ce504 5bdbfee87badc95a9e4849b8c5e2d9ab8a47ef87 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781867466 +0800	update by push
+5bdbfee87badc95a9e4849b8c5e2d9ab8a47ef87 64d68deb45db218fde8e25e7ef5b1ee1b562f746 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781867909 +0800	update by push
+
+【该文件结束】
+
+================================================================================
+【文件信息】
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/logs/refs/heads/main
 项目内路径：/.git/logs/refs/heads/main
 文件名：main
-文件大小：196 字节
+文件大小：2159 字节
 ================================================================================
 文件内容：
 0000000000000000000000000000000000000000 d82d66a0c5ce03bce326dc1826e8b5ae8ce229d1 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781857902 +0800	clone: from https://github.com/wyxdlz54188/Old_IOS_TERM.git
+d82d66a0c5ce03bce326dc1826e8b5ae8ce229d1 a2f101793a449ca162aca01f083fc0f7491bfa91 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858239 +0800	commit: update
+a2f101793a449ca162aca01f083fc0f7491bfa91 2c7057334ad08913595ea0bfe6660f92dc94ad2d wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858564 +0800	commit: update
+2c7057334ad08913595ea0bfe6660f92dc94ad2d 3b38781edc3de6761d1a6d6ce9e104bcd7385730 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858887 +0800	commit: update
+3b38781edc3de6761d1a6d6ce9e104bcd7385730 a8e4cbb7d77d2b68e25f1735143bfac0895454fd wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859267 +0800	commit: update
+a8e4cbb7d77d2b68e25f1735143bfac0895454fd 31a366da12897bd7d95803813693b0f1e7928960 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859405 +0800	commit: update
+31a366da12897bd7d95803813693b0f1e7928960 dede440ad9034a652a9c6f5c7060be3620940055 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859532 +0800	commit: update
+dede440ad9034a652a9c6f5c7060be3620940055 e356cb88628b27423beadc7ec9cbfbf84289e5a6 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781860119 +0800	commit: update
+e356cb88628b27423beadc7ec9cbfbf84289e5a6 09d7da137ee655fba0f8683e27c989819266446d wyxdlz54188 <liyuqili_1379zi@qq.com> 1781863317 +0800	commit: update
+09d7da137ee655fba0f8683e27c989819266446d 04f1d2b5edfbeadfb12bf7b3636cd51e53c82ad7 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781863510 +0800	commit: update
+04f1d2b5edfbeadfb12bf7b3636cd51e53c82ad7 9a8e05b918dcc33667c00ed5a16d9af6788b3c77 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781865455 +0800	commit: update
+9a8e05b918dcc33667c00ed5a16d9af6788b3c77 2c59526a2fd8b9772e99cb94dc7cf5995b2ce504 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781866692 +0800	commit: update
+2c59526a2fd8b9772e99cb94dc7cf5995b2ce504 5bdbfee87badc95a9e4849b8c5e2d9ab8a47ef87 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781867458 +0800	commit: update
+5bdbfee87badc95a9e4849b8c5e2d9ab8a47ef87 64d68deb45db218fde8e25e7ef5b1ee1b562f746 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781867899 +0800	commit: update
 
 【该文件结束】
 
@@ -1260,10 +1449,35 @@ ref: refs/remotes/origin/main
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/logs/HEAD
 项目内路径：/.git/logs/HEAD
 文件名：HEAD
-文件大小：196 字节
+文件大小：2159 字节
 ================================================================================
 文件内容：
 0000000000000000000000000000000000000000 d82d66a0c5ce03bce326dc1826e8b5ae8ce229d1 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781857902 +0800	clone: from https://github.com/wyxdlz54188/Old_IOS_TERM.git
+d82d66a0c5ce03bce326dc1826e8b5ae8ce229d1 a2f101793a449ca162aca01f083fc0f7491bfa91 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858239 +0800	commit: update
+a2f101793a449ca162aca01f083fc0f7491bfa91 2c7057334ad08913595ea0bfe6660f92dc94ad2d wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858564 +0800	commit: update
+2c7057334ad08913595ea0bfe6660f92dc94ad2d 3b38781edc3de6761d1a6d6ce9e104bcd7385730 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781858887 +0800	commit: update
+3b38781edc3de6761d1a6d6ce9e104bcd7385730 a8e4cbb7d77d2b68e25f1735143bfac0895454fd wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859267 +0800	commit: update
+a8e4cbb7d77d2b68e25f1735143bfac0895454fd 31a366da12897bd7d95803813693b0f1e7928960 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859405 +0800	commit: update
+31a366da12897bd7d95803813693b0f1e7928960 dede440ad9034a652a9c6f5c7060be3620940055 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781859532 +0800	commit: update
+dede440ad9034a652a9c6f5c7060be3620940055 e356cb88628b27423beadc7ec9cbfbf84289e5a6 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781860119 +0800	commit: update
+e356cb88628b27423beadc7ec9cbfbf84289e5a6 09d7da137ee655fba0f8683e27c989819266446d wyxdlz54188 <liyuqili_1379zi@qq.com> 1781863317 +0800	commit: update
+09d7da137ee655fba0f8683e27c989819266446d 04f1d2b5edfbeadfb12bf7b3636cd51e53c82ad7 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781863510 +0800	commit: update
+04f1d2b5edfbeadfb12bf7b3636cd51e53c82ad7 9a8e05b918dcc33667c00ed5a16d9af6788b3c77 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781865455 +0800	commit: update
+9a8e05b918dcc33667c00ed5a16d9af6788b3c77 2c59526a2fd8b9772e99cb94dc7cf5995b2ce504 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781866692 +0800	commit: update
+2c59526a2fd8b9772e99cb94dc7cf5995b2ce504 5bdbfee87badc95a9e4849b8c5e2d9ab8a47ef87 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781867458 +0800	commit: update
+5bdbfee87badc95a9e4849b8c5e2d9ab8a47ef87 64d68deb45db218fde8e25e7ef5b1ee1b562f746 wyxdlz54188 <liyuqili_1379zi@qq.com> 1781867899 +0800	commit: update
+
+【该文件结束】
+
+================================================================================
+【文件信息】
+完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.git/COMMIT_EDITMSG
+项目内路径：/.git/COMMIT_EDITMSG
+文件名：COMMIT_EDITMSG
+文件大小：7 字节
+================================================================================
+文件内容：
+update
 
 【该文件结束】
 
@@ -1286,7 +1500,7 @@ d82d66a0c5ce03bce326dc1826e8b5ae8ce229d1 refs/remotes/origin/main
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/.github/workflows/build.yml
 项目内路径：/.github/workflows/build.yml
 文件名：build.yml
-文件大小：6300 字节
+文件大小：6250 字节
 ================================================================================
 文件内容：
 name: Build NewTerm iOS 6
@@ -1455,7 +1669,7 @@ jobs:
         export THEOS_PROJECT_DIR=$PWD/Newterm
         cd $THEOS_PROJECT_DIR
         export PATH="$HOME/theos/bin:$PATH"
-        gmake package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.0
+        gmake package
         ls -la packages/
 
     - name: Upload Package
@@ -1521,7 +1735,7 @@ DerivedData/
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Newterm/Info.plist
 项目内路径：/Newterm/Info.plist
 文件名：Info.plist
-文件大小：1346 字节
+文件大小：1368 字节
 ================================================================================
 文件内容：
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1531,17 +1745,18 @@ DerivedData/
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>Terminal</string>
+	<string>NewTerm</string>
 	<key>CFBundleExecutable</key>
-	<string>MTerminal</string>
+	<string>Newterm</string>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string>icon-40</string>
-		<string>icon-60</string>
-		<string>icon-76</string>
+		<string>Icon</string>
+		<string>Icon@2x</string>
+		<string>Icon-72</string>
+		<string>Icon-72@2x</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>com.officialscheduler.mterminal</string>
+	<string>io.github.wyxdlz54188.oldterm</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -1595,101 +1810,6 @@ DerivedData/
   UIWindow* window;
   MTController* controller;
   UITabBarController* tabBarController;
-}
-@end
-
-【该文件结束】
-
-================================================================================
-【文件信息】
-完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Newterm/MTAppDelegate.m
-项目内路径：/Newterm/MTAppDelegate.m
-文件名：MTAppDelegate.m
-文件大小：3087 字节
-================================================================================
-文件内容：
-#import "MTAppDelegate.h"
-#import "MTController.h"
-#import "MTSettingsController.h"
-
-static UIImage* createTerminalIcon() {
-  UIGraphicsBeginImageContextWithOptions(CGSizeMake(30,30),NO,0);
-  CGContextRef ctx=UIGraphicsGetCurrentContext();
-
-  CGContextSetFillColorWithColor(ctx,[UIColor colorWithWhite:0.15 alpha:1].CGColor);
-  [[UIBezierPath bezierPathWithRoundedRect:CGRectMake(1,1,28,28) cornerRadius:6] fill];
-
-  [[UIColor colorWithRed:0.3 green:0.85 blue:0.3 alpha:1] setFill];
-  [@">_" drawAtPoint:CGPointMake(5,5) withFont:[UIFont fontWithName:@"Courier-Bold" size:18]];
-
-  UIImage* img=UIGraphicsGetImageFromCurrentImageContext();
-  UIGraphicsEndImageContext();
-  return img;
-}
-
-static UIImage* createSettingsIcon() {
-  UIGraphicsBeginImageContextWithOptions(CGSizeMake(30,30),NO,0);
-  CGContextRef ctx=UIGraphicsGetCurrentContext();
-
-  CGFloat cx=15,cy=15,outerR=13,innerR=9;
-  CGContextSetFillColorWithColor(ctx,[UIColor colorWithWhite:0.35 alpha:1].CGColor);
-
-  for(int i=0;i<8;i++){
-    CGFloat a=i*M_PI/4-M_PI/2;
-    CGFloat w=3,h=5;
-    CGContextSaveGState(ctx);
-    CGContextTranslateCTM(ctx,cx+cosf(a)*innerR,cy+sinf(a)*innerR);
-    CGContextRotateCTM(ctx,a);
-    CGContextFillRect(ctx,CGRectMake(-w/2,-h/2,w,h));
-    CGContextRestoreGState(ctx);
-  }
-
-  CGContextSetFillColorWithColor(ctx,[UIColor colorWithWhite:0.55 alpha:1].CGColor);
-  CGContextFillEllipseInRect(ctx,CGRectMake(cx-outerR,cy-outerR,outerR*2,outerR*2));
-  CGContextSetFillColorWithColor(ctx,[UIColor colorWithWhite:0.35 alpha:1].CGColor);
-  CGContextFillEllipseInRect(ctx,CGRectMake(cx-innerR,cy-innerR,innerR*2,innerR*2));
-  CGContextSetFillColorWithColor(ctx,[UIColor colorWithWhite:0.55 alpha:1].CGColor);
-  CGContextFillEllipseInRect(ctx,CGRectMake(cx-4,cy-4,8,8));
-
-  UIImage* img=UIGraphicsGetImageFromCurrentImageContext();
-  UIGraphicsEndImageContext();
-  return img;
-}
-
-@implementation MTAppDelegate
--(void)applicationDidFinishLaunching:(UIApplication*)application {
-  window=[[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-
-  controller=[[MTController alloc] init];
-  controller.title=@"Term";
-  controller.tabBarItem=[[[UITabBarItem alloc] initWithTitle:@"Term"
-    image:createTerminalIcon() tag:0] autorelease];
-
-  MTSettingsController* settingsController=[[MTSettingsController alloc] init];
-  settingsController.tabBarItem=[[[UITabBarItem alloc] initWithTitle:@"\u8bbe\u7f6e"
-    image:createSettingsIcon() tag:1] autorelease];
-
-  tabBarController=[[UITabBarController alloc] init];
-  tabBarController.viewControllers=[NSArray arrayWithObjects:controller,settingsController,nil];
-  [settingsController release];
-
-  window.rootViewController=tabBarController;
-  [tabBarController release];
-  [window makeKeyAndVisible];
-}
--(BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)URL {
-  return [controller handleOpenURL:URL];
-}
--(void)applicationDidEnterBackground:(UIApplication*)application {
-  if(!controller.isRunning){exit(0);}
-}
--(UIWindow*)window {
-  return window;
-}
--(void)dealloc {
-  [window release];
-  [controller release];
-  [super dealloc];
 }
 @end
 
@@ -2972,7 +3092,7 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Newterm/MTSettingsController.m
 项目内路径：/Newterm/MTSettingsController.m
 文件名：MTSettingsController.m
-文件大小：3870 字节
+文件大小：4130 字节
 ================================================================================
 文件内容：
 #import "MTSettingsController.h"
@@ -2981,6 +3101,7 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
   UITableView* tableView;
   UISlider* fontSizeSlider;
   UILabel* fontSizeLabel;
+  CGFloat currentFontSize;
 }
 @end
 
@@ -2988,6 +3109,16 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
 
 -(void)loadView {
   [self setTitle:@"\u8bbe\u7f6e"];
+
+  // 从 UserDefaults 读取当前字体大小
+  NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
+  NSString* name=[NSBundle mainBundle].bundleIdentifier;
+  NSDictionary* settings=[defaults persistentDomainForName:name];
+  NSNumber* savedSize=[settings objectForKey:@"fontSize"];
+  if([savedSize respondsToSelector:@selector(doubleValue)]){
+    currentFontSize=[savedSize doubleValue];
+  }
+  if(currentFontSize<=0) currentFontSize=10;
 
   UIView* view=[[UIView alloc] initWithFrame:CGRectZero];
   view.autoresizingMask=UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -3004,17 +3135,11 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
   [view addSubview:tableView];
   [tableView release];
 
-  NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
-  NSString* name=[NSBundle mainBundle].bundleIdentifier;
-  NSDictionary* settings=[defaults persistentDomainForName:name];
-  CGFloat currentSize=[[settings objectForKey:@"fontSize"] respondsToSelector:@selector(doubleValue)]?
-    [[settings objectForKey:@"fontSize"] doubleValue]:10;
-  if(currentSize<=0) currentSize=10;
-
-  fontSizeSlider=[[[UISlider alloc] initWithFrame:CGRectMake(0,0,200,30)] autorelease];
+  // 创建 fontSizeSlider 并 retain
+  fontSizeSlider=[[UISlider alloc] initWithFrame:CGRectMake(0,0,200,30)];
   fontSizeSlider.minimumValue=6;
   fontSizeSlider.maximumValue=24;
-  fontSizeSlider.value=currentSize;
+  fontSizeSlider.value=currentFontSize;
   [fontSizeSlider addTarget:self action:@selector(fontSizeChanged:)
     forControlEvents:UIControlEventValueChanged];
 }
@@ -3043,6 +3168,7 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
       reuseIdentifier:ident] autorelease];
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
 
+    // 创建 fontSizeLabel 并 retain
     fontSizeLabel=[[UILabel alloc] initWithFrame:CGRectMake(0,0,60,30)];
     fontSizeLabel.font=[UIFont boldSystemFontOfSize:16];
     fontSizeLabel.textColor=[UIColor colorWithRed:0.2 green:0.4 blue:0.8 alpha:1];
@@ -3051,6 +3177,7 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
     cell.accessoryView=fontSizeLabel;
     [fontSizeLabel release];
 
+    // 设置 slider 的 frame 并添加到 cell
     CGRect frame=fontSizeSlider.frame;
     frame.origin.x=15;
     frame.origin.y=(44-frame.size.height)/2;
@@ -3064,7 +3191,9 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
 
 -(void)fontSizeChanged:(UISlider*)slider {
   CGFloat fontSize=round(slider.value);
-  fontSizeLabel.text=[NSString stringWithFormat:@"%.0f pt",fontSize];
+  if(fontSizeLabel){
+    fontSizeLabel.text=[NSString stringWithFormat:@"%.0f pt",fontSize];
+  }
 
   NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
   NSString* name=[NSBundle mainBundle].bundleIdentifier;
@@ -3076,6 +3205,7 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
 }
 
 -(void)dealloc {
+  [fontSizeSlider release];
   [super dealloc];
 }
 
@@ -3103,7 +3233,7 @@ static void hspan_release(CFAllocatorRef allocator,hspan_t* span) {
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Newterm/Makefile
 项目内路径：/Newterm/Makefile
 文件名：Makefile
-文件大小：465 字节
+文件大小：479 字节
 ================================================================================
 文件内容：
 ARCHS = armv7 armv7s
@@ -3111,69 +3241,15 @@ TARGET = iphone:6.0:4.0
 
 include $(THEOS)/makefiles/common.mk
 
-APPLICATION_NAME = MTerminal
-MTerminal_FILES = $(wildcard *.m)
-MTerminal_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit
-MTerminal_LIBRARIES = util
-MTerminal_LDFLAGS = -lSystem_syms
-MTerminal_RESOURCE_FILES = Info.plist
+APPLICATION_NAME = Newterm
+Newterm_FILES = $(wildcard *.m)
+Newterm_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit
+Newterm_LIBRARIES = util
+Newterm_LDFLAGS = -lSystem_syms
+Newterm_RESOURCE_FILES = Info.plist Icon-72.png Icon-72@2x.png
 ADDITIONAL_OBJCFLAGS = -fno-objc-arc -include MTerminal_Prefix.pch -Wno-single-bit-bitfield-constant-conversion
 
 include $(THEOS_MAKE_PATH)/application.mk
-
-【该文件结束】
-
-================================================================================
-【文件信息】
-完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Newterm/README.md
-项目内路径：/Newterm/README.md
-文件名：README.md
-文件大小：1692 字节
-================================================================================
-文件内容：
-# mterminal
-A stripped-down, lightweight MobileTerminal fork with tap zones (see below)
-
-fork from https://bitbucket.org/lordscotland/mterminal
-
-
-Supported gestures:
-* Arrow keys: tap the respective edge of the terminal window
-* Control keys: tap and hold in the center of the terminal window, then press the corresponding key in the keyboard
-* Page up/down: press Shift, then tap the top/bottom edge
-* Home/End: press Shift, then tap the left/right edge
-* Insert/Delete: tap the upper left/right corner
-* Esc/Tab: tap the lower left/right corner
-* Hide keyboard: tap and hold with two fingers
-* Paste and re-flow (copy): open the edit menu by tapping and holding the center of the terminal window
-* Switch windows: tap and hold the lower right corner
-* Close window (kill): tap and hold the upper right corner
-* Switch windows quickly: swipe left or right across the screen
-
-Supported preference settings:
-
-palette (array[16]): color palette
-
-bgColor (string): background color
-
-fgColor (string): normal text color
-
-fgBoldColor (string); bold text color
-
-bgCursorColor (string); cursor fill color
-
-fgCursorColor (string); text color at cursor
-
-fontName (string): font name (all fonts supported)
-
-fontSize (double): font size in points
-
-fontWidthSample (string): string used to calculate the column width
-
-fontProportional (boolean): whether to allow variable widths
-
-
-To launch MTerminal with custom settings, launch Safari and enter mterminal://?var1=value1&var2=value2&.... For example, "mterminal://?palette=2E3436,CC0000, 4E9A06,C4A000,3465A4,75507B,06989A,D3D7CF, 555753,EF2929,8AE234,FCE94F,729FCF, AD7FA8,34E2E2, EEEEEC&bgColor=300A24" launches MTerminal with the Tango color scheme.
 
 【该文件结束】
 
@@ -4413,26 +4489,6 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
 
 ================================================================================
 【文件信息】
-完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Newterm/control
-项目内路径：/Newterm/control
-文件名：control
-文件大小：278 字节
-================================================================================
-文件内容：
-Package: com.officialscheduler.mterminal
-Name: MTerminal
-Depends: system-cmds
-Version: 1.4
-Architecture: iphoneos-arm
-Description: A MobileTerminal fork
-Maintainer: lordscotland <admin@officialscheduler.com>
-Author: lordscotland <admin@officialscheduler.com>
-Section: Utilities
-
-【该文件结束】
-
-================================================================================
-【文件信息】
 完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Newterm/main.m
 项目内路径：/Newterm/main.m
 文件名：main.m
@@ -4445,4 +4501,16 @@ int main(int argc,char** argv) {@autoreleasepool {
 
 【该文件结束】
 
-整合完成！总共处理 46 个文件。
+================================================================================
+【文件信息】
+完整路径：/storage/emulated/0/MT2/Old_IOS_TERM/Readme.md
+项目内路径：/Readme.md
+文件名：Readme.md
+文件大小：27 字节
+================================================================================
+文件内容：
+##Thanks for mobileterminal
+
+【该文件结束】
+
+整合完成！总共处理 48 个文件。
