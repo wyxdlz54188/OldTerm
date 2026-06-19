@@ -1,5 +1,5 @@
 #import "MTAboutController.h"
-#import "MarkdownParser.h"
+#import "Core/MarkdownParser.h"
 
 @interface MTAboutController () <UIWebViewDelegate>
 @end
