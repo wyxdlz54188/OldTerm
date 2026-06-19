@@ -45,10 +45,10 @@ jobs:
 
         # Create symlinks so -lsystem_c / -lsystem_kernel work
         # Modern ld64 doesn't follow LC_REEXPORT_DYLIB in old fat-stub dylibs
-        echo "=== Creating sub-library symlinks ==="
+        echo "=== Copying sub-library stubs to /usr/lib ==="
         cd $THEOS/sdks/iPhoneOS6.0.sdk/usr/lib
         for lib in system_c system_kernel; do
-          ln -sf system/lib${lib}.dylib lib${lib}.dylib
+          cp system/lib${lib}.dylib lib${lib}.dylib
         done
         ls -la libsystem_*.dylib
         
