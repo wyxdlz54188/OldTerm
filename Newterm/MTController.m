@@ -416,7 +416,7 @@ static NSString* getTitle(VT100* terminal) {
   return YES;
 }
 -(UIKeyboardAppearance)keyboardAppearance {
-  return darkBG?UIKeyboardAppearanceDark:UIKeyboardAppearanceDefault;
+   return darkBG?UIKeyboardAppearanceAlert:UIKeyboardAppearanceDefault;
 }
 -(UITextAutocapitalizationType)autocapitalizationType {
   return UITextAutocapitalizationTypeNone;

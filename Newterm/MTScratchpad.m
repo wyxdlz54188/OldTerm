@@ -29,7 +29,7 @@
   view.autocapitalizationType=UITextAutocapitalizationTypeNone;
   view.autocorrectionType=UITextAutocorrectionTypeNo;
   view.keyboardAppearance=darkBG?
-   UIKeyboardAppearanceDark:UIKeyboardAppearanceDefault;
+    UIKeyboardAppearanceAlert:UIKeyboardAppearanceDefault;
   view.backgroundColor=darkBG?[UIColor blackColor]:[UIColor whiteColor];
   view.textColor=darkBG?[UIColor lightTextColor]:[UIColor darkTextColor];
   view.indicatorStyle=darkBG?
