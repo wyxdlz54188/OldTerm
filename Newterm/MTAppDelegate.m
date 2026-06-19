@@ -4,7 +4,6 @@
 
 static UIImage* createTerminalIcon() {
   UIGraphicsBeginImageContextWithOptions(CGSizeMake(30,30),NO,0);
-  CGContextRef ctx=UIGraphicsGetCurrentContext();
 
   // 深色背景
   [[UIColor colorWithWhite:0.15 alpha:1] setFill];
@@ -21,7 +20,6 @@ static UIImage* createTerminalIcon() {
 
 static UIImage* createSettingsIcon() {
   UIGraphicsBeginImageContextWithOptions(CGSizeMake(30,30),NO,0);
-  CGContextRef ctx=UIGraphicsGetCurrentContext();
 
   CGFloat cx=15,cy=15,outerR=13,innerR=9;
 
@@ -30,6 +28,7 @@ static UIImage* createSettingsIcon() {
   for(int i=0;i<8;i++){
     CGFloat a=i*M_PI/4-M_PI/2;
     CGFloat w=3,h=5;
+    CGContextRef ctx=UIGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
     CGContextTranslateCTM(ctx,cx+cosf(a)*innerR,cy+sinf(a)*innerR);
     CGContextRotateCTM(ctx,a);
@@ -39,13 +38,13 @@ static UIImage* createSettingsIcon() {
 
   // 外圈
   [[UIColor colorWithWhite:0.5 alpha:1] setFill];
-  CGContextFillEllipseInRect(ctx,CGRectMake(cx-outerR,cy-outerR,outerR*2,outerR*2));
+  CGContextFillEllipseInRect(UIGraphicsGetCurrentContext(),CGRectMake(cx-outerR,cy-outerR,outerR*2,outerR*2));
   // 内圈
   [[UIColor colorWithWhite:0.35 alpha:1] setFill];
-  CGContextFillEllipseInRect(ctx,CGRectMake(cx-innerR,cy-innerR,innerR*2,innerR*2));
+  CGContextFillEllipseInRect(UIGraphicsGetCurrentContext(),CGRectMake(cx-innerR,cy-innerR,innerR*2,innerR*2));
   // 中心圆
   [[UIColor colorWithWhite:0.5 alpha:1] setFill];
-  CGContextFillEllipseInRect(ctx,CGRectMake(cx-4,cy-4,8,8));
+  CGContextFillEllipseInRect(UIGraphicsGetCurrentContext(),CGRectMake(cx-4,cy-4,8,8));
 
   UIImage* img=UIGraphicsGetImageFromCurrentImageContext();
   UIGraphicsEndImageContext();

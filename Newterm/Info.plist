@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Terminal</string>
 	<key>CFBundleExecutable</key>
-	<string>MTerminal</string>
+	<string>NewTerm</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon</string>
@@ -16,7 +16,7 @@
 		<string>Icon-72@2x</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>com.officialscheduler.mterminal</string>
+	<string>io.github.wyxdlz54188.oldterm</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

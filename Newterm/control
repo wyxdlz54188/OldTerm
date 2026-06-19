@@ -1,9 +1,9 @@
-Package: com.officialscheduler.mterminal
-Name: MTerminal
+Package: io.github.wyxdlz54188.oldterm
+Name: NewTerm
 Depends: system-cmds
-Version: 1.4
+Version: 2.0-debug
 Architecture: iphoneos-arm
 Description: A MobileTerminal fork
-Maintainer: lordscotland <admin@officialscheduler.com>
-Author: lordscotland <admin@officialscheduler.com>
-Section: Utilities
+Maintainer: wyxdlz54188 <lizi54188@outlook.com>
+Author: wyxdlz54188 <lizi54188@outlook.com>
+Section: 终端

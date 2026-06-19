@@ -3,7 +3,7 @@ TARGET = iphone:6.0:4.0
 
 include $(THEOS)/makefiles/common.mk
 
-APPLICATION_NAME = MTerminal
+APPLICATION_NAME = Newterm
 MTerminal_FILES = $(wildcard *.m)
 MTerminal_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit
 MTerminal_LIBRARIES = util
