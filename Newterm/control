@@ -1,7 +1,7 @@
 Package: io.github.wyxdlz54188.oldterm
 Name: NewTerm
 Depends: system-cmds
-Version: 2.1
+Version: 2.1.1
 Architecture: iphoneos-arm
 Description: A MobileTerminal fork
 Maintainer: wyxdlz54188 <lizi54188@outlook.com>
