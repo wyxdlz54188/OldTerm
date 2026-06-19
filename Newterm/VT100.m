@@ -556,7 +556,6 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                 case kDECAWM:bDECAWM=(opt==2)?mDECAWM:opt;break;
                 case kDECTCEM:bDECTCEM=(opt==2)?mDECTCEM:opt;break;
                 case 3:{// DECCOLM (132-column mode)
-                  // reset the screen but do not actually resize
                   CFIndex count=CFArrayGetCount(lineBuffer);
                   for (i=count-screenHeight;i<count;i++){
                     screen_line_t* line=(screen_line_t*)
@@ -575,7 +574,6 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                 case 1047:
                 case 1049:
                   if(opt==1){
-                    // Use alternate line buffer
                     if(!swapLineBuffer){
                       swapLineBuffer=CFArrayCreateCopy(NULL,lineBuffer);
                       swapDECOM=bDECOM;
@@ -593,7 +591,6 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                     [self ptyReset];
                   }
                   else if(swapLineBuffer){
-                    // Restore default line buffer
                     CFIndex count=CFArrayGetCount(swapLineBuffer);
                     const void** values=malloc(count*sizeof(screen_line_t*));
                     CFArrayGetValues(swapLineBuffer,CFRangeMake(0,count),values);
@@ -623,10 +620,10 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               }
             }
             break;
-          case 'r':// Restore DEC Private Mode value
+          case 'r':
             opt=2;
             goto __DECRST;
-          case 's':// Save DEC Private Mode value
+          case 's':
             for (i=0;i<nparams;i++){
               switch(params[i]){
                 case kDECBKM:mDECBKM=bDECBKM;break;
@@ -641,10 +638,10 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
       }
       else if(CSIModifier==kCSIModifierNone){
         switch(*dataptr){
-          case 'F':// CPL (Cursor Previous Line)
+          case 'F':
             bPastEOL=false;
             cursorX=0;
-          case 'A':// CUU (Cursor Up)
+          case 'A':
             j=cursorY-((0<nparams && (i=params[0])>1)?i:1);
             if(cursorY>=windowTop && j<windowTop){j=windowTop;}
             else if(j<0){j=0;}
@@ -653,11 +650,11 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               [self setCurrentLine];
             }
             break;
-          case 'E':// CNL (Cursor Next Line)
+          case 'E':
             bPastEOL=false;
             cursorX=0;
-          case 'B':// CUD (Cursor Down)
-          case 'e':// VPR (Vertical Position Relative)
+          case 'B':
+          case 'e':
             j=cursorY+((0<nparams && (i=params[0])>1)?i:1);
             if(cursorY<=windowBottom && j>windowBottom){j=windowBottom;}
             else if(j>screenHeight-1){j=screenHeight-1;}
@@ -666,29 +663,29 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               [self setCurrentLine];
             }
             break;
-          case 'C':// CUF (Cursor Forward)
-          case 'a':// HPR (Horizontal Position Relative)
+          case 'C':
+          case 'a':
             bPastEOL=false;
             cursorX+=((0<nparams && (i=params[0])>1)?i:1);
             if(cursorX>screenWidth-1){cursorX=screenWidth-1;}
             break;
-          case 'D':// CUB (Cursor Backward)
+          case 'D':
             bPastEOL=false;
             cursorX-=((0<nparams && (i=params[0])>1)?i:1);
             if(cursorX<0){cursorX=0;}
             break;
-          case 'G':// CHA (Cursor Horizontal Absolute)
-          case '`':// HPA (Horizontal Position Absolute)
+          case 'G':
+          case '`':
             bPastEOL=false;
             cursorX=(0<nparams && (i=params[0])>1)?i-1:0;
             if(cursorX>screenWidth-1){cursorX=screenWidth-1;}
             break;
-          case 'H':// CUP (Cursor Position)
-          case 'f':// HVP (Horizontal and Vertical Position)
+          case 'H':
+          case 'f':
             bPastEOL=false;
             cursorX=(1<nparams && (i=params[1])>1)?i-1:0;
             if(cursorX>screenWidth-1){cursorX=screenWidth-1;}
-          case 'd':// VPA (Vertical Position Absolute)
+          case 'd':
             j=(0<nparams && (i=params[0])>1)?i-1:0;
             if(bDECOM){j+=windowTop;}
             if(j>screenHeight-1){j=screenHeight-1;}
@@ -697,22 +694,22 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               [self setCurrentLine];
             }
             break;
-          case 'I':// CHT (Cursor Horizontal Forward Tabulation)
+          case 'I':
             j=(0<nparams && params[0]>1)?params[0]:1;
             while(cursorX<screenWidth-1 && (!tabstops[++cursorX] || --j>0));
             break;
-          case 'J':// ED (Erase In Display)
+          case 'J':
             i=(j=CFArrayGetCount(lineBuffer))-screenHeight;
             switch((0<nparams)?params[0]:0){
-              case 0:// erase to end of screen
+              case 0:
                 i+=cursorY+1;
-                opt=1;// fall through to EL
+                opt=1;
                 bPastEOL=false;
                 break;
-              case 1:// erase from start of screen
+              case 1:
                 j=i+cursorY;
-                opt=1;// fall through to EL
-              case 2:// erase entire screen
+                opt=1;
+              case 2:
                 bPastEOL=false;
                 break;
             }
@@ -724,16 +721,16 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               [self changedLineAtIndex:i];
             }
             if(!opt){break;}
-          case 'K':// EL (Erase In Line)
+          case 'K':
             i=j=screenWidth-1;
             switch((0<nparams)?params[0]:0){
-              case 0:// erase to end of line
+              case 0:
                 if(cursorX<i){i=cursorX;}
                 bPastEOL=false;
                 break;
-              case 1:// erase from start of line
+              case 1:
                 if(cursorX<j){j=cursorX;}
-              case 2:// erase entire line
+              case 2:
                 i=0;
                 bPastEOL=false;
                 break;
@@ -741,7 +738,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
             for (;i<=j;i++){currentLine->buf[i]=nullChar;}
             [self changedLineAtIndex:currentIndex];
             break;
-          case 'L':// IL (Insert Line)
+          case 'L':
             bPastEOL=false;
             cursorX=0;
             if(cursorY>=windowTop && cursorY<=windowBottom){
@@ -749,7 +746,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                fromY:windowBottom toY:cursorY];
             }
             break;
-          case 'M':// DL (Delete Line)
+          case 'M':
             bPastEOL=false;
             cursorX=0;
             if(cursorY>=windowTop && cursorY<=windowBottom){
@@ -757,9 +754,9 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                fromY:cursorY toY:windowBottom];
             }
             break;
-          case '@':// ICH (Insert Character)
+          case '@':
             opt=1;
-          case 'P':{// DCH (Delete Character)
+          case 'P':{
             bPastEOL=false;
             j=(0<params && (i=params[0])>1)?i:1;
             i=screenWidth-cursorX;
@@ -772,39 +769,39 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
             [self changedLineAtIndex:currentIndex];
             break;
           }
-          case 'S':// SU (Scroll Up)
+          case 'S':
             [self shiftLines:(0<nparams && params[0]>1)?params[0]:1
              fromY:windowTop toY:windowBottom];
             break;
-          case 'T':// SD (Scroll Down)
+          case 'T':
             [self shiftLines:(0<nparams && params[0]>1)?params[0]:1
              fromY:windowBottom toY:windowTop];
             break;
-          case 'X':// ECH (Erase Character)
+          case 'X':
             bPastEOL=false;
             j=cursorX+((0<nparams && params[0]>1)?params[0]:1);
             if(j>screenWidth){j=screenWidth;}
             for (i=cursorX;i<j;i++){currentLine->buf[i]=nullChar;}
             [self changedLineAtIndex:currentIndex];
             break;
-          case 'Z':// CBT (Cursor Backward Tabulation)
+          case 'Z':
             bPastEOL=false;
             j=(0<nparams && params[0]>1)?params[0]:1;
             while(cursorX>0 && (!tabstops[--cursorX] || --j>0));
             break;
-          case 'g':// TBC (Tabulation Clear)
+          case 'g':
             switch((0<nparams)?params[0]:0){
-              case 0:// clear tab stop at current position
+              case 0:
                 tabstops[cursorX]=false;
                 break;
-              case 3:// clear all tab stops
+              case 3:
                 memset(tabstops,false,tabstops_size);
                 break;
             }
             break;
-          case 'h':// SM (Set Mode)
+          case 'h':
             opt=1;
-          case 'l':// RM (Reset Mode)
+          case 'l':
             for (i=0;i<nparams;i++){
               switch(params[i]){
                 case 4:bIRM=opt;break;
@@ -812,13 +809,12 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               }
             }
             break;
-          case 'i':break;//! MC (Media Copy)
-          case 'm':// SGR (Select Graphic Rendition)
+          case 'i':break;
+          case 'm':
             for (i=0;i<nparams;i++){
               CFIndex arg=params[i];
               switch(arg){
                 case 0:__defaultSGR:
-                  // all attributes off
                   memset(&nullChar,0,sizeof(nullChar));
                   break;
                 case 1:nullChar.weight=kFontWeightBold;break;
@@ -841,7 +837,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                   if(i+1<nparams){
                     switch(params[++i]){
                       case 2:
-                        if(i+3<nparams){i+=3;}//! RGB
+                        if(i+3<nparams){i+=3;}
                         break;
                       case 5:
                         if(i+1<nparams){
@@ -857,7 +853,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                   if(i+1<nparams){
                     switch(params[++i]){
                       case 2:
-                        if(i+3<nparams){i+=3;}//! RGB
+                        if(i+3<nparams){i+=3;}
                         break;
                       case 5:
                         if(i+1<nparams){
@@ -890,7 +886,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
             }
             if(!i){goto __defaultSGR;}
             break;
-          case 'n':// DSR (Device Status Report)
+          case 'n':
             switch((0<nparams)?params[0]:0){
               case 5:
                 write(fd,$DSR,strlen($DSR));
@@ -905,8 +901,8 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               }
             }
             break;
-          case 'q':break;//! DECLL (Load LEDs)
-          case 'r':// DECSTBM (Set Top and Bottom Margins)
+          case 'q':break;
+          case 'r':
             if((i=(0<nparams)?params[0]:0)){i--;}
             if((j=(1<nparams)?params[1]:0)){j--;}
             else {j=screenHeight-1;}
@@ -922,7 +918,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
               }
             }
             break;
-          case 'x':// DECREQTPARM (Request Terminal Parameters)
+          case 'x':
             switch((0<nparams)?params[0]:0){
               case 0:
                 write(fd,$DECREPTPARM0,strlen($DECREPTPARM0));
@@ -932,7 +928,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
                 break;
             }
             break;
-          case 'y':break;//! DECTST (Invoke Confidence Test)
+          case 'y':break;
           case '$':case '&':case '\'':sequence=kSequenceSkipNext;
         }
       }
@@ -941,11 +937,11 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
     else if(sequence==kSequenceDEC){
       sequence=kSequenceNone;
       switch(*dataptr){
-        case '3':break;//! DECDHL (Double Height Line, top half)
-        case '4':break;//! DECDHL (Double Height Line, bottom half)
-        case '5':break;//! DECSWL (Single Width Line)
-        case '6':break;//! DECDWL (Double Width Line)
-        case '8':{// DECALN (Screen Alignment Test)
+        case '3':break;
+        case '4':break;
+        case '5':break;
+        case '6':break;
+        case '8':{
           CFIndex count=CFArrayGetCount(lineBuffer);
           for (i=count-screenHeight;i<count;i++){
             screen_line_t* line=(screen_line_t*)
@@ -970,49 +966,57 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
       sequence=kSequenceNone;
     }
     else {// this is a printable character
-      unichar uc;
+      unichar uc=0;
+      
       if(*dataptr<0x80){
+        // ASCII字符处理
         switch(charsets[glCharset>3?glCharset>>2:glCharset]){
           case '0':uc=$charsetGraphics[*dataptr];break;
           default:uc=*dataptr;break;
         }
         if(glCharset>3){glCharset&=3;}
       }
-      else {
-        // ✅ 修改：改进的多字节字符处理逻辑
-        CFStringRef str;
-        if(encbuf){
-          encbuf[encbuf_index++]=*dataptr;
-          str=CFStringCreateWithBytesNoCopy(NULL,
-           encbuf,encbuf_index,encoding,false,kCFAllocatorNull);
-          if(str){
-            // 成功转换多字节序列
-            uc=CFStringGetCharacterAtIndex(str,0);
-            CFRelease(str);
-            encbuf_index=0;
-          }
-          else if(encbuf_index>=encbuf_size){
-            // 缓冲区已满，放弃当前序列，用替换字符
-            encbuf_index=0;
-            uc=0xFFFD;  // Unicode Replacement Character
-          }
-          else {
-            // 字节不完整，等待更多字节
-            continue;
-          }
+      else if(encbuf){
+        // 多字节字符处理
+        encbuf[encbuf_index++]=*dataptr;
+        CFStringRef str=CFStringCreateWithBytesNoCopy(NULL,
+         encbuf,encbuf_index,encoding,false,kCFAllocatorNull);
+        
+        if(str){
+          // 成功解码多字节序列
+          uc=CFStringGetCharacterAtIndex(str,0);
+          CFRelease(str);
+          encbuf_index=0;
+        }
+        else if(encbuf_index>=encbuf_size){
+          // 缓冲区满且解码失败，丢弃
+          encbuf_index=0;
+          continue;  // 跳过这个无效字节
         }
         else {
-          // encbuf未分配，跳过此字节（不应该发生）
+          // 字节不完整，等待更多字节
           continue;
         }
       }
+      else {
+        // encbuf未分配，跳过
+        continue;
+      }
+      
+      // 跳过零宽字符
+      if(uc==0x200b || uc==0x200c || uc==0x200d || uc==0xfeff){
+        continue;
+      }
+      
+      // OSC字符串追加
       if(OSCString){
         CFStringAppendCharacters(OSCString,&uc,1);
         continue;
       }
+      
+      // 写入屏幕缓冲区
       bool wrapped=false;
       if(bPastEOL){
-        // either auto-wrap or discard this character
         if(!bDECAWM){continue;}
         [self changedLineAtIndex:currentIndex];
         [self nextLine];
@@ -1021,9 +1025,8 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
         wrapped=true;
       }
       else if(bIRM && cursorX<screenWidth-1){
-        // insert mode: shift characters to the right
         screen_char_t* ptr=currentLine->buf+cursorX;
-        memmove(ptr+1,ptr,(screenWidth-cursorX)*sizeof(screen_char_t));
+        memmove(ptr+1,ptr,(screenWidth-cursorX-1)*sizeof(screen_char_t));
       }
       currentLine->buf[cursorX]=nullChar;
       currentLine->buf[cursorX].c=uc;
@@ -1034,7 +1037,6 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
     }
   }
   if(notify){
-    // compute changes and notify delegate
     if(bTrackChanges){
       CFIndex count=CFArrayGetCount(indexMap),i;
       CFMutableSetRef deletions=CFSetCreateMutable(NULL,count,NULL);
@@ -1062,7 +1064,6 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
           inext=i+1;
           if(colchanged?(i==icursor || j==jcursor):
            ((i==icursor)!=(j==jcursor))){
-            // erase or redraw cursor
             CFSetAddValue(linesChanged,(void*)(top+j));
           }
         }
