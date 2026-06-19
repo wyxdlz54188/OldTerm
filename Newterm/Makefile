@@ -5,7 +5,7 @@ include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME = Newterm
 Newterm_FILES = $(wildcard *.m)
-Newterm_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit QuartzCore
+Newterm_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit QuartzCore CoreFoundation
 Newterm_LIBRARIES = util
 Newterm_LDFLAGS = -lSystem_syms
 Newterm_RESOURCE_FILES = Info.plist Icon-72.png Icon-72@2x.png

@@ -67,20 +67,25 @@ static UIImage* createSettingsIcon() {
   controller.tabBarItem=termItem;
   [termItem release];
 
+  // ✅ 修改：设置页嵌入 NavigationController
   MTSettingsController* settingsController=[[MTSettingsController alloc] init];
   settingsController.title=@"设置";
+  
+  UINavigationController* settingsNav=[[UINavigationController alloc] initWithRootViewController:settingsController];
+  settingsNav.navigationBar.barStyle=UIBarStyleDefault;
+  [settingsController release];
   
   UIImage* settingsIcon=createSettingsIcon();
   UITabBarItem* settingsItem=[[UITabBarItem alloc] initWithTitle:@"设置" image:nil tag:1];
   if([settingsItem respondsToSelector:@selector(setFinishedSelectedImage:withFinishedUnselectedImage:)]){
     [settingsItem setFinishedSelectedImage:settingsIcon withFinishedUnselectedImage:settingsIcon];
   }
-  settingsController.tabBarItem=settingsItem;
+  settingsNav.tabBarItem=settingsItem;
   [settingsItem release];
 
   tabBarController=[[UITabBarController alloc] init];
-  tabBarController.viewControllers=[NSArray arrayWithObjects:controller,settingsController,nil];
-  [settingsController release];
+  tabBarController.viewControllers=[NSArray arrayWithObjects:controller,settingsNav,nil];
+  [settingsNav release];
 
   window.rootViewController=tabBarController;
   [tabBarController release];
