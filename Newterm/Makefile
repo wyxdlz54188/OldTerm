@@ -8,7 +8,7 @@ MTerminal_FILES = $(wildcard *.m)
 MTerminal_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit
 MTerminal_LIBRARIES = util
 MTerminal_LDFLAGS = -lSystem_syms
-MTerminal_RESOURCE_FILES = Info.plist
+MTerminal_RESOURCE_FILES = Info.plist Icon-72.png Icon-72@2x.png
 ADDITIONAL_OBJCFLAGS = -fno-objc-arc -include MTerminal_Prefix.pch -Wno-single-bit-bitfield-constant-conversion
 
 include $(THEOS_MAKE_PATH)/application.mk
