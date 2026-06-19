@@ -1,10 +1,22 @@
 #import "MTAppDelegate.h"
 #import "MTController.h"
+#import "MTSettingsController.h"
 
 @implementation MTAppDelegate
 -(void)applicationDidFinishLaunching:(UIApplication*)application {
   window=[[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  window.rootViewController=controller=[[MTController alloc] init];
+
+  controller=[[MTController alloc] init];
+  controller.title=@"Term";
+
+  MTSettingsController* settingsController=[[MTSettingsController alloc] init];
+
+  tabBarController=[[UITabBarController alloc] init];
+  tabBarController.viewControllers=[NSArray arrayWithObjects:controller,settingsController,nil];
+  [settingsController release];
+
+  window.rootViewController=tabBarController;
+  [tabBarController release];
   [window makeKeyAndVisible];
 }
 -(BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)URL {
