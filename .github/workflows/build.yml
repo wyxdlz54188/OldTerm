@@ -164,7 +164,7 @@ jobs:
         export THEOS_PROJECT_DIR=$PWD/Newterm
         cd $THEOS_PROJECT_DIR
         export PATH="$HOME/theos/bin:$PATH"
-        gmake package FINALVERSION=1.0.0 IPHONEOS_DEPLOYMENT_TARGET=6.0
+        gmake package IPHONEOS_DEPLOYMENT_TARGET=6.0
         ls -la packages/
 
     - name: Upload Package
