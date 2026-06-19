@@ -7,7 +7,7 @@ APPLICATION_NAME = MTerminal
 MTerminal_FILES = $(wildcard *.m)
 MTerminal_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit
 MTerminal_LIBRARIES = util
-MTerminal_LDFLAGS = $(SYSROOT)/usr/lib/system/libsystem_c.dylib $(SYSROOT)/usr/lib/system/libsystem_kernel.dylib
+MTerminal_LDFLAGS = -framework System
 ADDITIONAL_OBJCFLAGS = -fno-objc-arc -include MTerminal_Prefix.pch -Wno-single-bit-bitfield-constant-conversion
 
 include $(THEOS_MAKE_PATH)/application.mk
