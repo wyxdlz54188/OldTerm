@@ -1,6 +1,6 @@
 Package: io.github.wyxdlz54188.oldterm
 Name: NewTerm
-Depends: system-cmds
+Depends: com.linusyang.localeutf8, system-cmds
 Version: 2.1.1
 Architecture: iphoneos-arm
 Description: A MobileTerminal fork
