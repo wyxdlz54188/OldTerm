@@ -108,7 +108,73 @@
         attrString = [element parseInline:attrString withConfiguration:self.configuration];
     }
     
+    // 处理 **粗体**
+    [self applyAttribute:NSFontAttributeName
+                  value:[UIFont boldSystemFontOfSize:self.configuration.defaultFont.pointSize]
+           matchingPattern:@"\\*\\*([^*]+)\\*\\*"
+       toAttributedString:attrString];
+
+    // 处理 __粗体__
+    [self applyAttribute:NSFontAttributeName
+                  value:[UIFont boldSystemFontOfSize:self.configuration.defaultFont.pointSize]
+           matchingPattern:@"__([^_]+)__"
+       toAttributedString:attrString];
+
+    // 处理 *斜体*
+    [self applyAttribute:NSFontAttributeName
+                  value:[UIFont italicSystemFontOfSize:self.configuration.defaultFont.pointSize]
+           matchingPattern:@"\\*(?!\\*)([^*]+)\\*(?!\\*)"
+       toAttributedString:attrString];
+
+    // 处理 `行内代码`
+    UIFont *codeFont = [UIFont fontWithName:@"Courier" size:self.configuration.defaultFont.pointSize];
+    if (!codeFont) codeFont = [UIFont systemFontOfSize:self.configuration.defaultFont.pointSize];
+    [self applyAttribute:NSFontAttributeName
+                  value:codeFont
+           matchingPattern:@"`([^`]+)`"
+       toAttributedString:attrString];
+    
     return attrString;
+}
+
+- (void)applyAttribute:(NSString *)attribute
+                value:(id)value
+     matchingPattern:(NSString *)pattern
+ toAttributedString:(NSMutableAttributedString *)attrString {
+    NSError *error = nil;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern
+                                                                           options:0
+                                                                             error:&error];
+    if (error) return;
+    
+    NSString *string = attrString.string;
+    NSArray *matches = [regex matchesInString:string
+                                      options:0
+                                        range:NSMakeRange(0, string.length)];
+    
+    for (NSInteger i = matches.count - 1; i >= 0; i--) {
+        NSTextCheckingResult *match = matches[i];
+        if (match.numberOfRanges < 2) continue;
+        
+        NSRange contentRange = [match rangeAtIndex:1];
+        NSString *content = [string substringWithRange:contentRange];
+        
+        NSMutableAttributedString *replacement = [[NSMutableAttributedString alloc] initWithString:content];
+        [replacement addAttribute:attribute value:value range:NSMakeRange(0, content.length)];
+        
+        UIColor *color = [attrString attribute:NSForegroundColorAttributeName
+                                       atIndex:match.range.location
+                                effectiveRange:NULL];
+        if (color) {
+            [replacement addAttribute:NSForegroundColorAttributeName
+                                value:color
+                                range:NSMakeRange(0, content.length)];
+        }
+        
+        [attrString replaceCharactersInRange:match.range
+                        withAttributedString:replacement];
+        [replacement release];
+    }
 }
 
 @end

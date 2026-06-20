@@ -27,22 +27,32 @@
     
     // 异步加载 Markdown
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *mdContent = nil;
         NSURL *url = [NSURL URLWithString:@"http://wyxdlz54188.github.io/repo/debs/io.github.wyxdlz54188.oldterm/About.md"];
-        NSString *mdContent = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
+        mdContent = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
+        
+        if (!mdContent) {
+            mdContent = @"# NewTerm\n\n"
+                         "iOS 6 终端模拟器，支持 VT100/xterm 控制序列。\n\n"
+                         "---\n\n"
+                         "## 功能特性\n\n"
+                         "- 多窗口标签页管理\n"
+                         "- 支持 SSH 连接\n"
+                         "- 256 色调色板\n"
+                         "- 自定义字体与字号\n"
+                         "- Markdown 渲染引擎\n\n"
+                         "---\n\n"
+                         "## 版本信息\n\n"
+                         "基于 MobileTerminal 改进，增加 Markdown 渲染、UTF-8 "
+                         "多语言支持和现代化设置界面。";
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (mdContent) {
-                // 使用 MarkdownParser 解析为 HTML
-                MarkdownParser *parser = [[MarkdownParser alloc] init];
-                NSAttributedString *attributed = [parser parse:mdContent];
-                
-                // 将 NSAttributedString 转为 HTML
-                NSString *html = [self htmlFromAttributedString:attributed];
-                
-                [webView loadHTMLString:html baseURL:nil];
-            } else {
-                [webView loadHTMLString:@"<html><body style='font-family:-apple-system;padding:20px;color:#999;text-align:center;'><p>加载失败</p></body></html>" baseURL:nil];
-            }
+            MarkdownParser *parser = [[MarkdownParser alloc] init];
+            NSAttributedString *attributed = [parser parse:mdContent];
+            NSString *html = [self htmlFromAttributedString:attributed];
+            [webView loadHTMLString:html baseURL:nil];
+            [parser release];
         });
     });
     

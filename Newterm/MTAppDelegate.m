@@ -43,7 +43,10 @@ static UIImage* createTerminalIcon() {
   [settingsController release];
   
   UIImage* settingsIcon=[UIImage imageNamed:@"tab_settings"];
-  UITabBarItem* settingsItem=[[UITabBarItem alloc] initWithTitle:@"设置" image:settingsIcon tag:1];
+  UITabBarItem* settingsItem=[[UITabBarItem alloc] initWithTitle:@"设置" image:nil tag:1];
+  if([settingsItem respondsToSelector:@selector(setFinishedSelectedImage:withFinishedUnselectedImage:)]){
+    [settingsItem setFinishedSelectedImage:settingsIcon withFinishedUnselectedImage:settingsIcon];
+  }
   settingsNav.tabBarItem=settingsItem;
   [settingsItem release];
 

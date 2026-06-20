@@ -122,7 +122,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
     else if(pid==0){
       if(execve("/usr/bin/login",
        (char*[]){"login","-fp",getlogin(),NULL},
-       (char*[]){"TERM=xterm-256color","LANG=en_US.UTF-8","LC_CTYPE=UTF-8","HOME=/var/mobile",NULL})==-1)
+       (char*[]){"TERM=xterm-256color","HOME=/var/mobile",NULL})==-1)
         raiseException(@"execve(login)");
     }
     else {
