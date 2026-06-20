@@ -120,10 +120,9 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
      .ws_col=screenWidth,.ws_row=screenHeight});
     if(pid==-1){raiseException(@"forkpty");}
     else if(pid==0){
-      // ✅ 修改：添加UTF-8环境变量
       if(execve("/usr/bin/login",
        (char*[]){"login","-fp",getlogin(),NULL},
-       (char*[]){"TERM=xterm","LANG=en_US.UTF-8",NULL})==-1)
+       (char*[]){"TERM=xterm","LANG=en_US.UTF-8","LC_ALL=en_US.UTF-8","LC_CTYPE=en_US.UTF-8","HOME=/var/mobile","PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin","SHELL=/bin/sh",NULL})==-1)
         raiseException(@"execve(login)");
     }
     else {
@@ -215,7 +214,7 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
   if(encbuf){free(encbuf);encbuf=NULL;}
   encoding=_encoding;
   CFIndex size=CFStringGetMaximumSizeForEncoding(1,encoding);
-  encbuf_size=(size>1)?size:1;
+  encbuf_size=(size>6)?size:6;
   encbuf=malloc(encbuf_size);
   encbuf_index=0;
 }

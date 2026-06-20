@@ -24,7 +24,11 @@ NSString+Markdown.m_CFLAGS = -fobjc-arc
 Newterm_FRAMEWORKS = AudioToolbox CoreGraphics CoreText UIKit QuartzCore CoreFoundation
 Newterm_LIBRARIES = util
 Newterm_LDFLAGS = -lSystem_syms
-Newterm_RESOURCE_FILES = Info.plist Icon-72.png Icon-72@2x.png assets/tab_settings.png
+Newterm_RESOURCE_FILES = Info.plist Icon-72.png Icon-72@2x.png
+
+stage::
+	$(ECHO_NOTHING)mkdir -p "$(THEOS_STAGING_DIR)/Applications/Newterm.app/assets"$(ECHO_END)
+	$(ECHO_NOTHING)cp assets/tab_settings.png "$(THEOS_STAGING_DIR)/Applications/Newterm.app/assets/tab_settings.png"$(ECHO_END)
 
 # 全局 MRC，MarkdownKit 文件通过上面的 _CFLAGS 覆盖为 ARC
 ADDITIONAL_OBJCFLAGS = -fno-objc-arc -include MTerminal_Prefix.pch -Wno-single-bit-bitfield-constant-conversion -I./Core -I./Elements -I./Extensions

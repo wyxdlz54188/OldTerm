@@ -42,7 +42,7 @@ static UIImage* createTerminalIcon() {
   settingsNav.navigationBar.barStyle=UIBarStyleDefault;
   [settingsController release];
   
-  UIImage* settingsIcon=[UIImage imageNamed:@"tab_settings"];
+  UIImage* settingsIcon=[UIImage imageNamed:@"assets/tab_settings"];
   UITabBarItem* settingsItem=[[UITabBarItem alloc] initWithTitle:@"设置" image:settingsIcon tag:1];
   settingsNav.tabBarItem=settingsItem;
   [settingsItem release];
