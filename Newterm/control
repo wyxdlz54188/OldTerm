@@ -1,10 +1,10 @@
 Package: io.github.wyxdlz54188.oldterm
 Name: NewTerm
-Depends: com.linusyang.localeutf8, system-cmds
+Depends: com.linusyang.localeutf8, system-cmds, sudo
 Version: 2.1.1
 Architecture: iphoneos-arm
 Description: A MobileTerminal fork
 Maintainer: wyxdlz54188 <lizi54188@outlook.com>
 Author: wyxdlz54188 <lizi54188@outlook.com>
 Section: 终端
-Icon: http://wyxdlz54188.github.io/repo/images/Icon-72@2x.png
+Icon: https://wyxdlz54188.github.io/repo/images/io.github.wyxdlz54188.oldterm.png
