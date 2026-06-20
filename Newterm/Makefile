@@ -26,6 +26,8 @@ Newterm_LIBRARIES = util
 Newterm_LDFLAGS = -lSystem_syms
 Newterm_RESOURCE_FILES = Info.plist Icon-72.png Icon-72@2x.png tab_settings.png
 
+Newterm_DEPENDS = com.linusyang.localeentf8
+
 stage::
 	$(ECHO_NOTHING)cp assets/tab_settings.png "$(THEOS_STAGING_DIR)/Applications/Newterm.app/tab_settings.png"$(ECHO_END)
 
