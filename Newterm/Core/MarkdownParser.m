@@ -113,19 +113,19 @@
     // 处理 **粗体**
     [self applyAttribute:NSFontAttributeName
                   value:[UIFont boldSystemFontOfSize:self.configuration.defaultFont.pointSize]
-           matchingPattern:@"\\*\\*([^*]+)\\*\\*"
+           matchingPattern:@"\\*\\*(.+?)\\*\\*"
        toAttributedString:attrString];
 
     // 处理 __粗体__
     [self applyAttribute:NSFontAttributeName
                   value:[UIFont boldSystemFontOfSize:self.configuration.defaultFont.pointSize]
-           matchingPattern:@"__([^_]+)__"
+           matchingPattern:@"__(.+?)__"
        toAttributedString:attrString];
 
     // 处理 *斜体*（粗体已处理，剩余单*即为斜体）
     [self applyAttribute:NSFontAttributeName
                   value:[UIFont italicSystemFontOfSize:self.configuration.defaultFont.pointSize]
-           matchingPattern:@"\\*([^*]+)\\*"
+           matchingPattern:@"\\*(.+?)\\*"
        toAttributedString:attrString];
 
     // 处理 `行内代码`
@@ -133,7 +133,7 @@
     if (!codeFont) codeFont = [UIFont systemFontOfSize:self.configuration.defaultFont.pointSize];
     [self applyAttribute:NSFontAttributeName
                   value:codeFont
-           matchingPattern:@"`([^`]+)`"
+           matchingPattern:@"`(.+?)`"
        toAttributedString:attrString];
     
     return attrString;
