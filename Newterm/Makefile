@@ -5,8 +5,8 @@ include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME = Newterm
 
-# 所有 .m 文件
-Newterm_FILES = $(wildcard *.m)
+# 所有 .m 文件（含子目录）
+Newterm_FILES = $(wildcard *.m) $(wildcard Core/*.m) $(wildcard Elements/*.m) $(wildcard Extensions/*.m)
 
 # MarkdownKit 文件单独开启 ARC
 MarkdownParser.m_CFLAGS = -fobjc-arc
