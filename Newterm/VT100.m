@@ -212,15 +212,12 @@ static void screen_line_release(CFAllocatorRef allocator,screen_line_t* line) {
    currentIndex=CFArrayGetCount(lineBuffer)-screenHeight+cursorY);
 }
 -(void)setEncoding:(CFStringEncoding)_encoding {
-  if(encoding!=_encoding){
-    encoding=_encoding;
-    // allocate a backlog for multi-byte characters
-    if(encbuf){free(encbuf);encbuf=NULL;}
-    CFIndex size=CFStringGetMaximumSizeForEncoding(1,encoding);
-    encbuf_size=(size>1)?size:1;  // ✅ 修改：始终分配缓冲区
-    encbuf=malloc(encbuf_size);
-    encbuf_index=0;
-  }
+  if(encbuf){free(encbuf);encbuf=NULL;}
+  encoding=_encoding;
+  CFIndex size=CFStringGetMaximumSizeForEncoding(1,encoding);
+  encbuf_size=(size>1)?size:1;
+  encbuf=malloc(encbuf_size);
+  encbuf_index=0;
 }
 -(void)setWidth:(CFIndex)newWidth height:(CFIndex)newHeight {
   if(newWidth==screenWidth && newHeight==screenHeight){return;}
